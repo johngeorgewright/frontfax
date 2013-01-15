@@ -2,7 +2,7 @@ connect    = require 'connect'
 path       = require 'path'
 http       = require 'http'
 app        = connect()
-workspace  = process.env.WORKSPACE ? path.join __dirname, '..', 'nethode-workspace'
+workspace  = process.env.WORKSPACE ? path.join __dirname, '..', 'frontfax-workspace'
 production =
 	host: process.env.PRODUCTION_HOSTNAME ? '172.16.133.43'
 	port: process.env.PRODUCTION_PORT     ? 51161

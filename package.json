@@ -1,9 +1,9 @@
 {
-  "name": "nethode",
+  "name": "frontfad",
   "version": "0.0.0",
-  "description": "Development environment for methode sites.",
+  "description": "Development environment for frontend developers at Fairfax Media.",
   "scripts": {
-    "start": "nf start"
+    "start": "node_modules/.bin/nf start"
   },
   "author": "John Wright <john.wright@fairfaxmedia.com.au>",
   "dependencies": {
