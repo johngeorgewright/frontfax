@@ -1,5 +1,5 @@
 {
-  "name": "frontfad",
+  "name": "frontfax",
   "version": "0.0.0",
   "description": "Development environment for frontend developers at Fairfax Media.",
   "scripts": {
@@ -7,9 +7,13 @@
   },
   "author": "John Wright <john.wright@fairfaxmedia.com.au>",
   "dependencies": {
+	  "bootstrap": "git+https://github.com/twitter/bootstrap.git#v2.2.2",
 	  "coffee-script": "1.4.0",
 	  "connect": "2.7.2",
-	  "foreman": "0.0.20"
+	  "foreman": "0.0.20",
+	  "less-middleware": "0.1.9",
+	  "requirejs": "2.1.2",
+	  "send": "0.1.0"
   }
 }
 

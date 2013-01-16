@@ -1,18 +1,68 @@
+# Required dependencies
 connect    = require 'connect'
 path       = require 'path'
 http       = require 'http'
-app        = connect()
-workspace  = process.env.WORKSPACE ? path.join __dirname, '..', 'frontfax-workspace'
-production =
-	host: process.env.PRODUCTION_HOSTNAME ? '172.16.133.43'
-	port: process.env.PRODUCTION_PORT     ? 51161
+less       = require 'less-middleware'
+path       = require 'path'
+fs         = require 'fs'
+middleware = require './middleware'
+config     = require('./config')()
+
+# The app object
+app = connect()
+
+# App configuration
+workspace = config.get 'WORKSPACE'
+bootstrap = config.get 'BOOTSTRAP_PATH'
 
 # Log the configuration
-console.log "Retrieving remote files from #{production.host}:#{production.port}"
+console.log "Retrieving remote files from #{config.get 'PRODUCTION_HOST'}:#{config.get 'PRODUCTION_PORT'}"
 console.log "Retrieving local files from #{workspace}"
 
 # Console logging
 app.use connect.logger 'dev'
+
+# Per request config
+app.use (req, res, next)->
+	match = req.url.match /^\/([^\/]+)/
+	if match
+		project   = match[1]
+		filesURL = "/#{project}/r/SysConfig/WebPortal/#{project}/_files"
+		req.__defineGetter__ 'cssURL', -> "#{filesURL}/css"
+		req.__defineGetter__ 'jsURL', -> "#{filesURL}/js"
+		req.__defineGetter__ 'projectDir', -> "#{config.get 'WORKSPACE'}/#{project}"
+		req.__defineGetter__ 'assetsDir', -> "#{req.projectDir}/assets"
+		req.__defineGetter__ 'buildDir', -> "#{req.projectDir}/build"
+		req.__defineGetter__ 'lessDir', -> "#{req.assetsDir}/less"
+		req.__defineGetter__ 'cssDir', -> "#{req.buildDir}/css"
+		req.__defineGetter__ 'jsDir', -> "#{req.assetsDir}/js"
+		req.__defineGetter__ 'jsBuildDir', -> "#{req.buildDir}/js"
+	next()
+
+# LESS and Bootstrap
+app.use '/img', connect.static path.join bootstrap, 'img'
+
+app.use (req, res, next)->
+	compiler = less
+		src    : req.lessDir
+		paths  : path.join bootstrap, 'less'
+		dest   : req.cssDir
+		prefix : req.cssURL
+		debug  : true
+	compiler req, res, next
+
+app.use (req, res, next)->
+	stat = middleware.static req.cssDir, req.cssURL
+	stat req, res, next
+
+# JS 
+app.use (req, res, next)->
+	stat = middleware.static path.join(bootstrap, 'js'), "#{req.jsURL}/bootstrap"
+	stat req, res, next
+
+app.use (req, res, next)->
+	stat = middleware.static req.jsDir, req.jsURL
+	stat req, res, next
 
 # First look in the workspace directory
 app.use connect.static workspace
@@ -20,8 +70,8 @@ app.use connect.static workspace
 # Then proxy to the configured production server
 app.use (req, res, next)->
 	options =
-		hostname : production.host
-		port     : production.port
+		hostname : config.get('PRODUCTION_HOST')
+		port     : config.get('PRODUCTION_PORT')
 		path     : req.url
 		method   : req.method
 
@@ -29,7 +79,7 @@ app.use (req, res, next)->
 		proxyRes.pipe res
 		# Make sure that redirects don't forward to production server
 		if proxyRes.headers.location?
-			proxyRes.headers.location = proxyRes.headers.location.replace "#{production.host}:#{production.port}", req.headers.host
+			proxyRes.headers.location = proxyRes.headers.location.replace "#{config.get('PRODUCTION_HOST')}:#{config.get('PRODUCTION_PORT')}", req.headers.host
 		res.writeHead proxyRes.statusCode, proxyRes.headers
 
 	req.pipe proxyReq
