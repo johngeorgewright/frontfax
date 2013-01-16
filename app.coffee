@@ -23,21 +23,7 @@ console.log "Retrieving local files from #{workspace}"
 app.use connect.logger 'dev'
 
 # Per request config
-app.use (req, res, next)->
-	match = req.url.match /^\/([^\/]+)/
-	if match
-		project   = match[1]
-		filesURL = "/#{project}/r/SysConfig/WebPortal/#{project}/_files"
-		req.__defineGetter__ 'cssURL', -> "#{filesURL}/css"
-		req.__defineGetter__ 'jsURL', -> "#{filesURL}/js"
-		req.__defineGetter__ 'projectDir', -> "#{config.get 'WORKSPACE'}/#{project}"
-		req.__defineGetter__ 'assetsDir', -> "#{req.projectDir}/assets"
-		req.__defineGetter__ 'buildDir', -> "#{req.projectDir}/build"
-		req.__defineGetter__ 'lessDir', -> "#{req.assetsDir}/less"
-		req.__defineGetter__ 'cssDir', -> "#{req.buildDir}/css"
-		req.__defineGetter__ 'jsDir', -> "#{req.assetsDir}/js"
-		req.__defineGetter__ 'jsBuildDir', -> "#{req.buildDir}/js"
-	next()
+app.use middleware.frontfaxRequest workspace
 
 # LESS and Bootstrap
 app.use '/img', connect.static path.join bootstrap, 'img'
@@ -51,18 +37,11 @@ app.use (req, res, next)->
 		debug  : true
 	compiler req, res, next
 
-app.use (req, res, next)->
-	stat = middleware.static req.cssDir, req.cssURL
-	stat req, res, next
+app.use middleware.static req.cssDir, req.cssURL
 
 # JS 
-app.use (req, res, next)->
-	stat = middleware.static path.join(bootstrap, 'js'), "#{req.jsURL}/bootstrap"
-	stat req, res, next
-
-app.use (req, res, next)->
-	stat = middleware.static req.jsDir, req.jsURL
-	stat req, res, next
+app.use middleware.static path.join(bootstrap, 'js'), "#{req.jsURL}/bootstrap"
+app.use middleware.static req.jsDir, req.jsURL
 
 # First look in the workspace directory
 app.use connect.static workspace
