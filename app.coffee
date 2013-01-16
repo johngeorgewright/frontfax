@@ -32,6 +32,8 @@ app.use (req, res, next)->
 	stat req, res, next
 
 # JS 
+app.use middleware.requirejs
+
 app.use (req, res, next)->
 	stat = middleware.static path.join(bootstrap, 'js'), "#{req.jsURL}/bootstrap"
 	stat req, res, next
