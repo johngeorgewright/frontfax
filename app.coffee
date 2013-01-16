@@ -2,7 +2,6 @@
 connect    = require 'connect'
 path       = require 'path'
 http       = require 'http'
-less       = require 'less-middleware'
 path       = require 'path'
 fs         = require 'fs'
 middleware = require './middleware'
@@ -27,41 +26,25 @@ app.use middleware.frontfaxRequest workspace
 
 # LESS and Bootstrap
 app.use '/img', connect.static path.join bootstrap, 'img'
-
+app.use middleware.less path.join bootstrap, 'less'
 app.use (req, res, next)->
-	compiler = less
-		src    : req.lessDir
-		paths  : path.join bootstrap, 'less'
-		dest   : req.cssDir
-		prefix : req.cssURL
-		debug  : true
-	compiler req, res, next
-
-app.use middleware.static req.cssDir, req.cssURL
+	stat = middleware.static req.cssDir, req.cssURL
+	stat req, res, next
 
 # JS 
-app.use middleware.static path.join(bootstrap, 'js'), "#{req.jsURL}/bootstrap"
-app.use middleware.static req.jsDir, req.jsURL
+app.use (req, res, next)->
+	stat = middleware.static path.join(bootstrap, 'js'), "#{req.jsURL}/bootstrap"
+	stat req, res, next
+
+app.use (req, res, next)->
+	stat = middleware.static req.jsDir, req.jsURL
+	stat req, res, next
 
 # First look in the workspace directory
 app.use connect.static workspace
 
 # Then proxy to the configured production server
-app.use (req, res, next)->
-	options =
-		hostname : config.get('PRODUCTION_HOST')
-		port     : config.get('PRODUCTION_PORT')
-		path     : req.url
-		method   : req.method
-
-	proxyReq = http.request options, (proxyRes)->
-		proxyRes.pipe res
-		# Make sure that redirects don't forward to production server
-		if proxyRes.headers.location?
-			proxyRes.headers.location = proxyRes.headers.location.replace "#{config.get('PRODUCTION_HOST')}:#{config.get('PRODUCTION_PORT')}", req.headers.host
-		res.writeHead proxyRes.statusCode, proxyRes.headers
-
-	req.pipe proxyReq
+app.use middleware.proxy config.get('PRODUCTION_HOST'), config.get('PRODUCTION_PORT')
 
 # Starts the server
 app.start = ->

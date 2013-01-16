@@ -12,6 +12,7 @@
 	  "connect": "2.7.2",
 	  "foreman": "0.0.20",
 	  "less-middleware": "0.1.9",
+	  "require-all": "0.0.5",
 	  "requirejs": "2.1.2",
 	  "send": "0.1.0"
   }

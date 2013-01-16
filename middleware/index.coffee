@@ -1,2 +1,2 @@
-exports.static = require './static'
-exports.frontfaxRequest = require './frontfaxRequest'
+require('module-index') module
+
