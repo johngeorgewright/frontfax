@@ -24,8 +24,6 @@ module.exports = (path, baseURL)->
 				else
 					next err
 
-			console.log path, filename
-
 			sender.root path
 			sender.on 'error', error
 			sender.on 'directory', resume

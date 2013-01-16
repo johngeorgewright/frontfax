@@ -24,9 +24,6 @@ app.use connect.logger 'dev'
 # Per request config
 app.use middleware.frontfaxRequest workspace
 
-# First look in the workspace directory
-app.use connect.static workspace
-
 # LESS and Bootstrap
 app.use '/img', connect.static path.join bootstrap, 'img'
 app.use middleware.less path.join bootstrap, 'less'
@@ -44,6 +41,9 @@ app.use (req, res, next)->
 app.use (req, res, next)->
 	stat = middleware.static req.jsDir, req.jsURL
 	stat req, res, next
+
+# Look in the workspace directory
+app.use connect.static workspace
 
 # Then proxy to the configured production server
 app.use middleware.proxy config.get('PRODUCTION_HOST'), config.get('PRODUCTION_PORT')
