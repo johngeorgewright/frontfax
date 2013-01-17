@@ -119,9 +119,9 @@ Now you can point to one CSS file (`/brw2/r/SysConfig/WebPortal/brw2/_files/css/
 
 ### JavaScript
 
-Editing JavaScript files are even simpler. Put to `/brw2/r/SysConfig/WebPortal/brw2/_files/js/main.js` and all files in the `../frontfax-workspace/brw2/assets/js` are combined and returned.
+Editing JavaScript files are even simpler. Point to `/brw2/r/SysConfig/WebPortal/brw2/_files/js/main.js` and all files in the `../frontfax-workspace/brw2/assets/js` directory are combined and returned.
 
-If you would like to build the combined JS in to one file to upload methode run the following command in the frontfax directory.
+If you would like to build the combined all your JS in to one file ibefore uploading to methode, run the following command in the frontfax directory.
 
 ```sh
 cake -P brw2 build:js
