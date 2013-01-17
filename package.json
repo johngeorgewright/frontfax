@@ -15,6 +15,7 @@
 	  "http-proxy": "0.8.7",
 	  "less-middleware": "0.1.9",
 	  "mkdirp": "0.3.4",
+	  "module-index": "3.0.2",
 	  "send": "0.1.0"
   }
 }
