@@ -8,19 +8,16 @@ task 'build:js', 'Compiles all JavaScript requirements into one file', (options)
 	throw new Error 'The project name is required' if not options.project
 
 	path        = require 'path'
-	spawn       = require('child_process').spawn
 	config      = require('./config') options.env
+	combine     = require './lib/combine'
+	fs          = require 'fs'
 	projectPath = path.join config.get('WORKSPACE'), options.project
+	source      = path.join projectPath, 'assets', 'js'
+	dest        = path.join projectPath, 'build', 'js', 'main.js'
 
-	builder = spawn path.join('node_modules', '.bin', 'r.js'), [
-		'-o',
-		"baseUrl=#{path.join projectPath, 'assets', 'js'}",
-		"paths.bootstrap/dropdown=#{path.join __dirname, 'node_modules', 'bootstrap', 'js', 'bootstrap-dropdown'}",
-		'name=main',
-		"out=#{path.join projectPath, 'build', 'js', 'main.js'}"
-	]
-
-	builder.stdout.on 'data', (data)-> console.log data.toString()
-	builder.stderr.on 'data', (data)-> console.log data.toString()
-	builder.on 'exit', (code)-> console.log "exited with code #{code}"
+	combine.dir source, '.js', (err, data)->
+		throw new Error err if err
+		fs.writeFile dest, data, (err)->
+			throw new Error err if err
+			console.log dest
 
