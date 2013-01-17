@@ -10,6 +10,7 @@
 	  "bootstrap": "git+https://github.com/twitter/bootstrap.git#v2.2.2",
 	  "coffee-script": "1.4.0",
 	  "connect": "2.7.2",
+	  "github-flavored-markdown": "1.0.1",
 	  "foreman": "0.0.20",
 	  "less-middleware": "0.1.9",
 	  "require-all": "0.0.5",

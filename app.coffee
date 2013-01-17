@@ -18,6 +18,9 @@ bootstrap = config.get 'BOOTSTRAP_PATH'
 console.log "Retrieving remote files from #{config.get 'PRODUCTION_HOST'}:#{config.get 'PRODUCTION_PORT'}"
 console.log "Retrieving local files from #{workspace}"
 
+# README at '/'
+app.use '/', middleware.readme()
+
 # Console logging
 app.use connect.logger 'dev'
 
