@@ -1,34 +1,19 @@
-fs    = require 'fs'
-url   = require 'url'
-send  = require 'send'
-utils = require 'connect/lib/utils'
+connect = require 'connect'
+utils   = require 'connect/lib/utils'
 
 module.exports = (path, baseURL)->
 	(req, res, next)->
-		next() unless req.method in ['GET', 'HEAD']
 
-		pathname = url.parse(req.url).pathname
+		pathname = utils.parseUrl(req).pathname
+		pathname = '/' if pathname is undefined
+		return next() unless pathname.indexOf(baseURL) is 0
 
-		if pathname.indexOf(baseURL) is 0
-			filename = pathname.replace baseURL, ''
-			sender   = send req, filename
-			pause    = utils.pause req
+		originalURL = req.url
+		req.url     = req.url.substr baseURL.length
+		req.url     = "/#{req.url}" unless req.url[0] is '/'
+		stat        = connect.static path
 
-			resume = ->
-				next()
-				pause.resume()
-
-			error = (err)->
-				if err.status is 404
-					resume()
-				else
-					next err
-
-			sender.root path
-			sender.on 'error', error
-			sender.on 'directory', resume
-			sender.pipe res
-
-		else
-			next()
+		stat req, res, (err)->
+			req.url = originalURL
+			next err
 
