@@ -30,9 +30,6 @@ app.use middleware.frontfaxRequest workspace
 # LESS and Bootstrap
 app.use '/img', connect.static path.join bootstrap, 'img'
 app.use middleware.less path.join bootstrap, 'less'
-app.use (req, res, next)->
-	stat = middleware.static req.cssDir, req.cssURL
-	stat req, res, next
 
 # JS 
 app.use middleware.mainjs()
