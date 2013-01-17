@@ -31,7 +31,7 @@ task 'setup:workspace', 'Creates all required directories in your workspace', (o
 	assets      = path.join projectPath, 'assets'
 	build       = path.join projectPath, 'build'
 	jsDir       = path.join assets, 'js'
-	jsDest      = path.join build, 'js', 'main.js'
+	jsDest      = path.join build, 'js'
 	lessDir     = path.join assets, 'less'
 	cssDir      = path.join build, 'css'
 	dirs        = [lessDir, cssDir, jsDir, jsDest]
