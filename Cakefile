@@ -21,3 +21,22 @@ task 'build:js', 'Compiles all JavaScript requirements into one file', (options)
 			throw new Error err if err
 			console.log dest
 
+task 'setup:workspace', 'Creates all required directories in your workspace', (options)->
+	throw new Error 'The project name is required' if not options.project
+
+	path        = require 'path'
+	config      = require('./config') options.env
+	setup       = require './lib/setup'
+	projectPath = path.join config.get('WORKSPACE'), options.project
+	assets      = path.join projectPath, 'assets'
+	build       = path.join projectPath, 'build'
+	jsDir       = path.join assets, 'js'
+	jsDest      = path.join build, 'js', 'main.js'
+	lessDir     = path.join assets, 'less'
+	cssDir      = path.join build, 'css'
+	dirs        = [lessDir, cssDir, jsDir, jsDest]
+
+	setup.createDirectories dirs, (err, dir)->
+		throw new Error err if err
+		console.log " + #{dir}"
+
