@@ -11,6 +11,14 @@ Installation
 3. Install the dependencies `npm i`
 4. Start the server `npm start`
 5. Then [view the server](http://localhost:8080)
+6. After any further configurations create all the required directories for your project with the following command:
+
+   ```sh
+   cake -P [PROJECT] setup:workspace
+   ```
+
+   ... where `[PROJECT]` is your project name (IE brw2). This needs to be same as what's used on the dev URL (IE `http://172.16.133.43:51161/[PROJECT]`).
+
 
 Your Workspace
 --------------
@@ -23,13 +31,6 @@ This is the process in which frontfax handles each HTTP request:
 2. Tries to find it in your workspace (../frontfax-workspace/brw2/images/logo.png). If found the file is returned and the process stops here.
 3. Proxies the request to the configured production server and returns the result.
 
-After any further configurations create all the required directories for your project with the following command:
-
-```sh
-cake -P [PROJECT] setup:workspace
-```
-
-... where `[PROJECT]` is your project name (IE brw2). This needs to be same as what's used on the dev URL (IE 172.16.133.43:51161/[PROJECT]).
 
 Configuration
 -------------
