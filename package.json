@@ -3,20 +3,20 @@
   "version": "0.0.0",
   "description": "Development environment for frontend developers at Fairfax Media.",
   "scripts": {
-    "start": "node_modules/.bin/nf start"
+    "start": "node_modules/.bin/cake start"
   },
   "author": "John Wright <john.wright@fairfaxmedia.com.au>",
   "dependencies": {
 	  "bootstrap": "git+https://github.com/twitter/bootstrap.git#v2.2.2",
 	  "coffee-script": "1.4.0",
-	  "connect": "2.7.2",
-	  "foreman": "0.0.20",
-	  "github-flavored-markdown": "1.0.1",
+	  "express": "3.0.6",
+	  "highlight.js": "7.3.0",
 	  "http-proxy": "0.8.7",
+	  "jade": "0.1.9",
 	  "less-middleware": "0.1.9",
+	  "marked": "0.2.7",
 	  "mkdirp": "0.3.4",
-	  "module-index": "3.0.2",
-	  "send": "0.1.0"
+	  "module-index": "3.0.2"
   }
 }
 
