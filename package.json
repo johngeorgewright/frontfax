@@ -9,10 +9,10 @@
   "dependencies": {
 	  "bootstrap": "git+https://github.com/twitter/bootstrap.git#v2.2.2",
 	  "coffee-script": "1.4.0",
+    "config": "0.4.18",
 	  "express": "3.0.6",
 	  "highlight.js": "7.3.0",
 	  "http-proxy": "0.8.7",
-	  "jade": "0.1.9",
 	  "less-middleware": "0.1.9",
 	  "marked": "0.2.7",
 	  "mkdirp": "0.3.4",
