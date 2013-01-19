@@ -9,13 +9,13 @@ program.version '0.0.1'
 program
 	.command('compile:less')
 	.description('Compiles less files and watches for any changes')
-	.action actions.compile.less path.resolve('..', 'less-test', 'less'), path.resolve('..', 'less-test', 'css')
+	.action actions.compile.less 'assets/less', 'assets/css'
 
 program
 	.command('compile:js')
 	.description('Combines all js files in to one file')
 	.option('-b, --beautify', 'Beautifies the output')
-	.action actions.compile.js path.resolve('..', 'less-test', 'js'), path.resolve('..', 'less-test', 'main.js')
+	.action actions.compile.js 'assets/js', 'assets/js/main.js'
 
 program
 	.command('project:new')
