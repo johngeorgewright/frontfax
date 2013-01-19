@@ -10,8 +10,12 @@ create = (name)->
 	gitignore = new skeleton.GitIgnore
 		base : name
 
+	procfile = new skeleton.Procfile
+		base : name
+
 	pckge.render()
 	gitignore.render()
+	procfile.render()
 
 exports.new = ->
 	->
