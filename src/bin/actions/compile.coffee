@@ -1,3 +1,4 @@
+fs      = require 'fs'
 stalker = require 'stalker'
 mkdirp  = require 'mkdirp'
 path    = require 'path'
@@ -8,29 +9,20 @@ exports.js = (source, dest)->
 
 	combiningJs = no
 
-	(program)->
+	compile = (program)->
+		unless combiningJs
+			combiningJs = yes
+			walker      = walk.walk source
+			files       = []
 
-		process.exit()
+			walker.on 'file', (root, stats, next)->
+				file = "#{root}/#{stats.name}"
+				ext  = path.extname stats.name
+				files.push file unless file is dest or ext isnt '.js'
+				next()
 
-		mkdirp path.dirname dest
-
-		stalker.watch source, (err, file)->
-
-			if err
-				console.log err
-
-			else unless combiningJs
-				combiningJs = yes
-				walker      = walk.walk source
-				files       = []
-
-				walker.on 'file', (root, stats, next)->
-					file = "#{root}/#{stats.name}"
-					ext  = path.extname stats.name
-					files.push file unless file is dest or ext isnt '.js'
-					next()
-
-				walker.on 'end', ->
+			walker.on 'end', ->
+				if files.length > 0
 					console.log "Combining all files from #{source} to #{dest}"
 					commands = files
 					commands.push '-o', dest
@@ -40,32 +32,49 @@ exports.js = (source, dest)->
 					uglify.stderr.on 'data', (data)-> console.log data.toString()
 					uglify.on 'exit', -> combiningJS = no
 
+	(program)->
+		mkdirp path.dirname(dest), ->
+			if program.watch
+				stalker.watch source, (err, file)->
+					if err
+						console.log err
+					else
+						compile program
+			else
+				compile program
+
 exports.less = (source, dest)->
 
 	compilingLess = []
 
-	mkdirp source
+	compile = (file)->
+		if path.extname(file) is '.less' and file not in compilingLess
+			compilingLess.push file
+
+			build     = file.replace source, dest
+			basename  = path.basename build, path.extname build
+			basename += '.css'
+			buildDir  = path.dirname build
+			build     = "#{buildDir}/#{basename}"
+
+			console.log "Compiling #{file} to #{build}"
+			mkdirp buildDir
+			lessc = spawn 'node_modules/.bin/lessc', [file, build]
+			lessc.stdout.on 'data', (data)-> console.log data.toString()
+			lessc.stderr.on 'data', (data)-> console.log data.toString()
+			lessc.on 'exit', -> compilingLess.splice compilingLess.indexOf(file), 1
 
 	(program)->
-		
-		stalker.watch source, (err, file)->
-
-			if err
-				console.log err
-
-			else if path.extname(file) is '.less' and file not in compilingLess
-				compilingLess.push file
-
-				build     = file.replace source, dest
-				basename  = path.basename build, path.extname build
-				basename += '.css'
-				buildDir  = path.dirname build
-				build     = "#{buildDir}/#{basename}"
-
-				console.log "Compiling #{file} to #{build}"
-				mkdirp buildDir
-				lessc = spawn 'node_modules/.bin/lessc', [file, build]
-				lessc.stdout.on 'data', (data)-> console.log data.toString()
-				lessc.stderr.on 'data', (data)-> console.log data.toString()
-				lessc.on 'exit', -> compilingLess.splice compilingLess.indexOf(file), 1
+		mkdirp source, ->
+			if program.watch
+				stalker.watch source, (err, file)->
+					if err
+						console.log err
+					else
+						compile file
+			else
+				walker = walk.walk source
+				walker.on 'file', (root, stats, next)->
+					compile "#{root}/#{stats.name}"
+					next()
 

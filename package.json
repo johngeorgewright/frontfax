@@ -13,6 +13,7 @@
   "dependencies": {
 	  "coffee-script": "1.4.0",
 	  "commander": "1.1.1",
+	  "config": "0.4.18",
 	  "express": "3.0.6",
 	  "highlight.js": "7.3.0",
 	  "http-proxy": "0.8.7",

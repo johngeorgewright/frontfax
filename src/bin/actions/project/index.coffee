@@ -13,9 +13,13 @@ create = (name)->
 	procfile = new skeleton.Procfile
 		base : name
 
+	config = new skeleton.Config
+		base : name
+
 	pckge.render()
 	gitignore.render()
 	procfile.render()
+	config.render()
 
 exports.new = ->
 	->

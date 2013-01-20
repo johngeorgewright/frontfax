@@ -17,28 +17,16 @@ app.configure ->
 	app.use express.errorHandler()
 
 # Fetch images from a configured source
-if config.assets.images?
-	app.get config.assets.images.url, express.static(config.assets.images.source)
+if config.assets?.images?
+	app.use config.assets.images, express.static('assets/images')
 
-# Build less files from a configured source
-if config.assets.less?
-	app.get config.assets.less.url, less
-		src    : config.assets.less.source
-		dest   : config.assets.less.dest
-		prefix : path.dirname config.assets.less.url
-		paths  : path.join __dirname, 'node_modules', 'bootstrap', 'less'
-		debug  : true
-	app.use path.dirname(config.assets.less.url), express.static(config.assets.less.dest)
-
-# Combine all js files from one directory
-if config.assets.js?.combine?
-	app.get config.assets.js.combine.url, controllers.assets.combine
-		source    : config.assets.js.source
-		extension : 'js'
+# CSS
+if config.assets?.css?
+	app.use config.assets.css, express.static('assets/css')
 
 # Fetch js from a configured directory
-if config.assets.js?
-	app.use path.dirname(config.assets.js.url), express.static(config.assets.js.source)
+if config.assets?.js?
+	app.use config.assets.js, express.static('assets/js')
 
 # Add a base URL to all requests
 if config.base?
