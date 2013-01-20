@@ -3,12 +3,14 @@
   "version": "0.0.0",
   "description": "Development environment for frontend developers at Fairfax Media.",
   "scripts": {
-    "postinstall": "node_modules/.bin/coffee -c -o build src",
-    "start": "node_modules/.bin/cake start"
+    "postinstall": "node_modules/.bin/coffee -c -o build src"
+  },
+  "main": "build/app/index",
+  "bin": {
+	  "frontfax": "build/bin/frontfax.js"
   },
   "author": "John Wright <john.wright@fairfaxmedia.com.au>",
   "dependencies": {
-	  "bootstrap": "git+https://github.com/twitter/bootstrap.git#v2.2.2",
 	  "coffee-script": "1.4.0",
 	  "express": "3.0.6",
 	  "highlight.js": "7.3.0",
