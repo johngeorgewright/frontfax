@@ -1,2 +1,0 @@
-require('module-index') module
-
