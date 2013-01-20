@@ -10,9 +10,9 @@ module.exports = class Config extends Base
 		{
 			"base": false,
 			"assets": {
-				"images": "/SysConfig/WebPortal/:project/_files/images",
-				"css": "/SysConfig/WebPortal/:project/_files/css",
-				"js": "/SysConfig/WebPortal/:project/_files/js"
+				"images": "/r/SysConfig/WebPortal/:project/_files/images",
+				"css": "/r/SysConfig/WebPortal/:project/_files/css",
+				"js": "/r/SysConfig/WebPortal/:project/_files/js"
 			},
 			"proxy": {
 				"host": "google.com",
