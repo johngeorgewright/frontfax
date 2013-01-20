@@ -35,7 +35,7 @@ exports.js = (source, dest)->
 					commands = files
 					commands.push '-o', dest
 					commands.push '-b' if program.beautify
-					uglify = spawn 'uglifyjs', commands
+					uglify = spawn 'node_modules/.bin/uglifyjs', commands
 					uglify.stdout.on 'data', (data)-> console.log data.toString()
 					uglify.stderr.on 'data', (data)-> console.log data.toString()
 					uglify.on 'exit', -> combiningJS = no
@@ -43,6 +43,8 @@ exports.js = (source, dest)->
 exports.less = (source, dest)->
 
 	compilingLess = []
+
+	mkdirp source
 
 	(program)->
 		
@@ -62,7 +64,7 @@ exports.less = (source, dest)->
 
 				console.log "Compiling #{file} to #{build}"
 				mkdirp buildDir
-				lessc = spawn 'lessc', [file, build]
+				lessc = spawn 'node_modules/.bin/lessc', [file, build]
 				lessc.stdout.on 'data', (data)-> console.log data.toString()
 				lessc.stderr.on 'data', (data)-> console.log data.toString()
 				lessc.on 'exit', -> compilingLess.splice compilingLess.indexOf(file), 1

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Development environment for frontend developers at Fairfax Media.",
   "scripts": {
-    "postinstall": "node_modules/.bin/coffee -c -o build src"
+    "postinstall": "node_modules/.bin/cake postinstall"
   },
   "main": "build/app/index",
   "bin": {
@@ -12,13 +12,18 @@
   "author": "John Wright <john.wright@fairfaxmedia.com.au>",
   "dependencies": {
 	  "coffee-script": "1.4.0",
+	  "commander": "1.1.1",
 	  "express": "3.0.6",
 	  "highlight.js": "7.3.0",
 	  "http-proxy": "0.8.7",
+	  "less": "1.3.3",
 	  "less-middleware": "0.1.9",
 	  "marked": "0.2.7",
 	  "mkdirp": "0.3.4",
-	  "module-index": "3.0.2"
+	  "module-index": "3.0.2",
+	  "stalker": "0.0.20",
+	  "uglify-js": "2.2.3",
+	  "walk": "2.2.1"
   }
 }
 

@@ -1,5 +1,3 @@
-#!/usr/bin/env coffee
-
 program	= require 'commander'
 actions	= require './actions'
 path    = require 'path'
