@@ -1,72 +1,47 @@
 Frontfax
 =======
 
-Sets up a development environment for frontend developers of Methode sites at Fairfax Media.
+Sets up a development environment for frontend developers that can't access the source code. Recently, at the last couple of places that I've been working, it's been somewhat impossible to access the source code of the working project, and therefore, I've been downloading the source via the web, working on it and then posting it back to backend developers to insert in to the project. This is somewhat annoying, so I've developed **Frontfax**.
 
 Installation
 ------------
 
 1. Install [node](http://nodejs.org) and [npm](https://npmjs.org)
-2. Clone this repo `git clone https://bitbucket.org/johngeorgewright/frontfax.git`
-3. Install the dependencies `npm i`
-4. Start the server `npm start`
-5. Then [view the server](http://localhost:8080)
-6. After any further configurations create all the required directories for your project with the following command:
-
-   ```sh
-   cake -P [PROJECT] setup:workspace
-   ```
-
-   ... where `[PROJECT]` is your project name (IE brw2). This needs to be same as what's used on the dev URL (IE `http://172.16.133.43:51161/[PROJECT]`).
-
+2. Install Frontfax `[sudo] npm i -g frontfax` (TODO: It hasn't been released to NPM yet.
+3. Create a project `frontfax project:new myproject`
+4. Install the dependencies `cd myproject && npm i`
+5. Start the server `npm start`
+6. Then [view the server](http://localhost:5000)
 
 Your Workspace
 --------------
 
-By default, before looking at the configured production server, frontfax will first check your "workspace". By default it will exist in `../frontfax-workspace`. This, together with all other configurations can be configured in a `.env` file.
+	- myproject
+		- assets
+			- css
+			- images
+			- js
+			- less
 
 This is the process in which frontfax handles each HTTP request:
 
-1. Receives a request (for example /brw2/images/logo.png).
-2. Tries to find it in your workspace (../frontfax-workspace/brw2/images/logo.png). If found the file is returned and the process stops here.
-3. Proxies the request to the configured production server and returns the result.
+1. Receives a request (for example /images/logo.png).
+2. Tries to find it in your workspace (assets/images/logo.png). If found the file is returned and the process stops here.
+3. Proxies the request to the configured proxy server and returns the result.
 
+### URL Configuration
 
-Configuration
--------------
+The images, js and css URLs are can configured, but these files will always be accessed from you assets directory.
 
-To change any configuration of Frontfax edit (or create) the `.env` file found in the root of the nethod project.
+### LESS
 
-The file should be in the following format:
+While you're working on any less files they will automatically be converted in to css and placed in the css directory.
 
-```
-CONFIG_NAME=value
-OTHER_CONFIG_NAME=other value
-```
+The advantages are of writing you CSS as LESS are:
 
-### Configuration Options
-
-- WORKSPACE *Your workspace directory. Needs to be either an absolute path or relative to the frontfax root. __Default `../frontfax-workspace`__*
-- PRODUCTION_HOSTNAME *The production host where remote files will be retreived from. __Default `172.16.133.43`__*
-- PRODUCTION_PORT *The production port. __Default `51161`__*
-
-Working on a site
------------------
-
-Just like the dev server (172.16.133.42:51161) your projects will live at `/[project]` I.E. `http://localhost:8080/brw2`.
-
-### CSS (LESS)
-
-CSS assets can be written in LESS. The advantages are:
-
+- Pre-processing functionality
 - Syntax is the same as CSS, so even if you don't want to use LESS's functionality you can just write plain CSS.
 - You can compile a selection of files in to one.
-
-When a request comes in to `/brw2/r/SysConfig/WebPortal/brw2/_files/css/main.css` the process will be:
-
-- Looks for a LESS file at `../frontfax-workspace/brw2/assets/less/main.less`. If it is found it will be rendered to `../frontfax-workspace/brw2/build/css/main.css`.
-- Looks for the file `../frontfax-workspace/brw2/build/css/main.css`. If it is found the process will end here and the file is returned.
-- Looks for the file `../frontfax-workspace/brw2/r/SysConfig/WebPortal/brw2/_files/css/main.css`
 
 When writing your less files, it is recommended to have one "main" file that includes all the requirements. This means that only one file needs to be uploaded to the production server after development.
 
@@ -125,6 +100,26 @@ Now you can point to one CSS file (`/brw2/r/SysConfig/WebPortal/brw2/_files/css/
 	/* teaser styles */
 }
 ```
+
+### JS Combine
+
+While you're working on any js files they will automatically be combined into js/main.js
+
+Configuration
+-------------
+
+The configuration file exists at `config/default.json`.
+
+### Options
+
+- **base**          : A base URL which all HTTP request should be prefixed with.
+- **assets.css**    : The CSS URL (I.E. /stylesheets)
+- **assets.images** : The images URL (I.E. /files/images)
+- **assets.js**     : The JavaScript URL (I.E. /javascripts)
+
+### CSS (LESS)
+
+
 
 ### JavaScript
 
