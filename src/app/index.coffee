@@ -34,6 +34,9 @@ if config.assets?.css?
 if config.assets?.js?
 	app.use config.assets.js, express.static path.join assets, 'js'
 
+# Lastly look for anything in the static directory
+app.use express.static path.resolve 'static'
+
 # Add a base URL to all requests
 if config.base? and config.base
 	child = app
@@ -43,7 +46,7 @@ if config.base? and config.base
 		app.use controllers.proxy.buffer() if config.proxy?
 		app.use config.base, child
 
-# Proxy unsuccessfull request to a configured server
+# Proxy unsuccessfull requests to a configured server
 if config.proxy?
 	app.use controllers.proxy.request config.proxy
 

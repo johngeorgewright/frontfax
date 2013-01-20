@@ -22,6 +22,7 @@ Your Workspace
 			- images
 			- js
 			- less
+		- static
 
 This is the process in which frontfax handles each HTTP request:
 
@@ -31,7 +32,11 @@ This is the process in which frontfax handles each HTTP request:
 
 ### URL Configuration
 
-The images, js and css URLs are can configured, but these files will always be accessed from you assets directory.
+The images, js, css URLs are can configured, but these files will always be accessed from you assets directory.
+
+The `static` directory is the last place the server looks before proxying the request. This is good for HTML files. You do not need to configure the URL for this as it will consider the root to be accessible from the static directory.
+
+To change the URLs open the `config/default.json` file and edit the `assets.image|css|js` urls. 
 
 ### LESS
 
@@ -82,7 +87,7 @@ Here's an example. Try to split your work in to many easy to read files.
 @import 'article';
 ```
 
-Now you can point to one CSS file (`/brw2/r/SysConfig/WebPortal/brw2/_files/css/main.css`) and have all your CSS returned:
+Now you can point to one CSS file (`/my/configured/css/path/main.css`) and have all your CSS returned:
 
 ```css
 /* build/main.css */
@@ -103,35 +108,7 @@ Now you can point to one CSS file (`/brw2/r/SysConfig/WebPortal/brw2/_files/css/
 
 ### JS Combine
 
-While you're working on any js files they will automatically be combined into js/main.js
-
-Configuration
--------------
-
-The configuration file exists at `config/default.json`.
-
-### Options
-
-- **base**          : A base URL which all HTTP request should be prefixed with.
-- **assets.css**    : The CSS URL (I.E. /stylesheets)
-- **assets.images** : The images URL (I.E. /files/images)
-- **assets.js**     : The JavaScript URL (I.E. /javascripts)
-
-### CSS (LESS)
-
-
-
-### JavaScript
-
-Editing JavaScript files are even simpler. Point to `/brw2/r/SysConfig/WebPortal/brw2/_files/js/main.js` and all files in the `../frontfax-workspace/brw2/assets/js` directory are combined and returned.
-
-If you would like to build the combined all your JS in to one file ibefore uploading to methode, run the following command in the frontfax directory.
-
-```sh
-cake -P brw2 build:js
-```
-
-This will then combine all the files placed in `../frontfax-workspace/brw2/assets/js` in to `../frontfax-workspace/brw2/build/js/main.js`.
+While you're working on any js files they will automatically be combined into assets/js/main.js.
 
 Bugs
 ----
