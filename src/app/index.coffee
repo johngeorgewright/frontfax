@@ -16,6 +16,9 @@ app.configure ->
 	app.use app.router
 	app.use express.errorHandler()
 
+# When using proxies we need to make sure
+# we buffer the request object before making
+# any asyncronous calls.
 if config.proxy?
 	app.use controllers.proxy.buffer()
 
