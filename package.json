@@ -2,9 +2,6 @@
   "name": "frontfax",
   "version": "0.0.1",
   "description": "Development environment for frontend developers at Fairfax Media.",
-  "scripts": {
-    "postinstall": "node_modules/.bin/cake postinstall"
-  },
   "main": "build/app/index.js",
   "bin": {
 	  "frontfax": "build/bin/frontfax.js"
