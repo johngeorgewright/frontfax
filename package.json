@@ -11,6 +11,7 @@
   },
   "author": "John Wright <john.wright@fairfaxmedia.com.au>",
   "dependencies": {
+	  "async": "0.1.22",
 	  "coffee-script": "1.4.0",
 	  "commander": "1.1.1",
 	  "config": "0.4.18",

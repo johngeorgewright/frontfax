@@ -1,4 +1,4 @@
-fs		 = require 'fs'
+fs     = require 'fs'
 path   = require 'path'
 assert = require 'assert'
 mkdirp = require 'mkdirp'
@@ -14,15 +14,16 @@ module.exports = class Base
 	content: ->
 		''
 
-	render: ->
+	render: (callback)->
 		base     = @base ? '.'
 		filename = "#{base}/#{@filename()}"
 		dirname	 = path.dirname filename
 
-		mkdirp dirname, (err)->
+		mkdirp dirname, (err)=>
 			assert.ifError err
 
-		fs.writeFile filename, @content(), (err)->
-			assert.ifError err
-			console.log " + #{filename}"
+			fs.writeFile filename, @content(), (err)->
+				assert.ifError err
+				console.log " + #{filename}"
+				callback() if callback
 
