@@ -2,9 +2,9 @@ config      = require 'config'
 controllers = require './controllers'
 express     = require 'express'
 http        = require 'http'
-less        = require 'less-middleware'
 path        = require 'path'
 app         = express()
+assets      = path.resolve 'assets'
 
 # Basic configuration
 app.configure ->
@@ -16,20 +16,23 @@ app.configure ->
 	app.use app.router
 	app.use express.errorHandler()
 
+if config.proxy?
+	app.use controllers.proxy.buffer()
+
 # Fetch images from a configured source
 if config.assets?.images?
-	app.use config.assets.images, express.static('assets/images')
+	app.use config.assets.images, express.static path.join assets, 'images'
 
 # CSS
 if config.assets?.css?
-	app.use config.assets.css, express.static('assets/css')
+	app.use config.assets.css, express.static path.join assets, 'css'
 
 # Fetch js from a configured directory
 if config.assets?.js?
-	app.use config.assets.js, express.static('assets/js')
+	app.use config.assets.js, express.static path.join assets, 'js'
 
 # Add a base URL to all requests
-if config.base?
+if config.base? and config.base
 	child = app
 	app   = express()
 	app.configure ->

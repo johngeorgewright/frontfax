@@ -4,6 +4,7 @@ mkdirp  = require 'mkdirp'
 path    = require 'path'
 walk    = require 'walk'
 spawn   = require('child_process').spawn
+bin     = path.join __dirname, '..', '..', '..', 'node_modules', '.bin'
 
 exports.js = (source, dest)->
 
@@ -27,7 +28,7 @@ exports.js = (source, dest)->
 					commands = files
 					commands.push '-o', dest
 					commands.push '-b' if program.beautify
-					uglify = spawn 'node_modules/.bin/uglifyjs', commands
+					uglify = spawn "#{bin}/uglifyjs", commands
 					uglify.stdout.on 'data', (data)-> console.log data.toString()
 					uglify.stderr.on 'data', (data)-> console.log data.toString()
 					uglify.on 'exit', -> combiningJS = no
@@ -57,12 +58,18 @@ exports.less = (source, dest)->
 			buildDir  = path.dirname build
 			build     = "#{buildDir}/#{basename}"
 
-			console.log "Compiling #{file} to #{build}"
-			mkdirp buildDir
-			lessc = spawn 'node_modules/.bin/lessc', [file, build]
-			lessc.stdout.on 'data', (data)-> console.log data.toString()
-			lessc.stderr.on 'data', (data)-> console.log data.toString()
-			lessc.on 'exit', -> compilingLess.splice compilingLess.indexOf(file), 1
+			console.log "Compiling #{file}"
+			mkdirp buildDir, (err)->
+				if err
+					console.log err
+				else
+					lessc = spawn "#{bin}/lessc", [file, build]
+					lessc.stdout.on 'data', (data)-> console.log data.toString()
+					lessc.stderr.on 'data', (data)-> console.log data.toString()
+					lessc.on 'exit', (code)->
+						if code is 0
+							console.log "Created #{build}"
+							compilingLess.splice compilingLess.indexOf(file), 1
 
 	(program)->
 		mkdirp source, ->
