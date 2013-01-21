@@ -3,12 +3,13 @@ stalker = require 'stalker'
 mkdirp  = require 'mkdirp'
 path    = require 'path'
 walk    = require 'walk'
-spawn   = require('child_process').spawn
+exec    = require('child_process').exec
 bin     = path.join __dirname, '..', '..', '..', 'node_modules', '.bin'
 
 exports.js = (source, dest)->
 
 	combiningJs = no
+	UglifyJS    = require 'uglify-js'
 
 	compile = (program)->
 		unless combiningJs
@@ -25,13 +26,12 @@ exports.js = (source, dest)->
 			walker.on 'end', ->
 				if files.length > 0
 					console.log "Combining all files from #{source} to #{dest}"
-					commands = files
-					commands.push '-o', dest
-					commands.push '-b' if program.beautify
-					uglify = spawn "#{bin}/uglifyjs", commands
-					uglify.stdout.on 'data', (data)-> console.log data.toString()
-					uglify.stderr.on 'data', (data)-> console.log data.toString()
-					uglify.on 'exit', -> combiningJS = no
+					result = UglifyJS.minify files,
+						output:
+							beautify: program.beautify ? false
+					fs.writeFile dest, result.code, (err)->
+						console.log err if err
+						combiningJs = no
 				else
 					fs.unlink dest, (err)->
 						if err
@@ -72,13 +72,15 @@ exports.less = (source, dest)->
 				if err
 					console.log err
 				else
-					lessc = spawn "#{bin}/lessc", [file, build]
-					lessc.stdout.on 'data', (data)-> console.log data.toString()
-					lessc.stderr.on 'data', (data)-> console.log data.toString()
-					lessc.on 'exit', (code)->
-						if code is 0
+					exec "#{bin}/lessc #{file} #{build}", (error, stdout, stderr)->
+						if error
+							console.log error.message
+						else if stderr
+							console.log stderr
+						else
+							console.log stdout
 							console.log "Created #{build}"
-							compilingLess.splice compilingLess.indexOf(file), 1
+						compilingLess.splice compilingLess.indexOf(file), 1
 
 	modify = (err, file)->
 		if err
