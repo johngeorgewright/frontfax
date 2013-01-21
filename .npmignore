@@ -1,6 +1,6 @@
-build
 config
 node_modules
+src
 .exrc
 *.log
 *.swp

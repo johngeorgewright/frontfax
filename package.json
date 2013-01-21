@@ -1,15 +1,17 @@
 {
   "name": "frontfax",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Development environment for frontend developers at Fairfax Media.",
   "main": "build/app/index.js",
   "bin": {
 	  "frontfax": "build/bin/frontfax.js"
   },
+  "scripts": {
+	  "prepublish": "cake build"
+  },
   "author": "John Wright <john.wright@fairfaxmedia.com.au>",
   "dependencies": {
 	  "async": "0.1.22",
-	  "coffee-script": "1.4.0",
 	  "commander": "1.1.1",
 	  "config": "0.4.18",
 	  "express": "3.0.6",
@@ -22,6 +24,9 @@
 	  "stalker": "0.0.20",
 	  "uglify-js": "2.2.3",
 	  "walk": "2.2.1"
+  },
+  "devDependencies": {
+	  "coffee-script": "1.4.0"
   }
 }
 
