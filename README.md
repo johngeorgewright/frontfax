@@ -7,7 +7,7 @@ Installation
 ------------
 
 1. Install [node](http://nodejs.org) and [npm](https://npmjs.org)
-2. Install Frontfax `[sudo] npm i -g frontfax` (TODO: It hasn't been released to NPM yet.
+2. Install Frontfax `[sudo] npm i -g frontfax`
 3. Create a project `frontfax project:new myproject`
 4. Install the dependencies `cd myproject && npm i`
 5. Start the server `npm start`
