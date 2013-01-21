@@ -1,5 +1,5 @@
 Frontfax
-=======
+========
 
 Sets up a development environment for frontend developers that can't access the source code. Recently, at the last couple of places that I've been working, it's been somewhat impossible to access the source code of the working project, and therefore, I've been downloading the source via the web, working on it and then posting it back to backend developers to insert in to the project. This is somewhat annoying, so I've developed **Frontfax**.
 
@@ -8,10 +8,14 @@ Installation
 
 1. Install [node](http://nodejs.org) and [npm](https://npmjs.org)
 2. Install Frontfax `[sudo] npm i -g frontfax`
-3. Create a project `frontfax project:new myproject`
-4. Install the dependencies `cd myproject && npm i`
-5. Start the server `npm start`
-6. Then [view the server](http://localhost:5000)
+
+Creating a Project
+------------------
+
+1. Create a project `frontfax project:new myproject`
+2. Install the dependencies `cd myproject && npm i`
+3. Start the server `npm start`
+4. Then [view the server](http://localhost:5000)
 
 Your Workspace
 --------------
