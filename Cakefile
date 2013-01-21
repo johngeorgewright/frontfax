@@ -16,7 +16,7 @@ task 'build', 'Builds the JavaScript files', ->
 		fs.readFile "#{__dirname}/#{file}", (err, data)->
 			if err
 				callback err
-			else if data.toString().indexOf('#!') is 0
+			else unless data.toString().indexOf('#!') is 0
 				data = "#!/usr/bin/env node\n\n#{data.toString()}"
 				fs.writeFile file, data, (err)->
 					if err
