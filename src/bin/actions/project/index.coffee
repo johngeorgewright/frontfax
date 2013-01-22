@@ -15,7 +15,7 @@ exports.new = ->
 
 		async.forEach [less, js, css, images, stat], mkdirp, callback
 
-	create = (name)->
+	create = (name, callback=->)->
 		pckge = new skeleton.Package
 			name   : name
 			author : 'Frontfax developer'
@@ -38,7 +38,7 @@ exports.new = ->
 			(callback)-> createAssets name, callback
 		], (err)->
 			if err
-				console.log err
+				callback err
 			else
 				console.log """
 
@@ -47,6 +47,7 @@ exports.new = ->
 						npm i
 
 					"""
+				callback()
 
 	->
 		program = arguments[arguments.length-1]
@@ -57,17 +58,35 @@ exports.new = ->
 
 		name = arguments[0]
 
-		if fs.existsSync name
-			stat = fs.statSync name
-			if stat.isDirectory()
-				program.confirm "\"#{name}\" already exists. Do you want to create the project inside of an existing directory?", (ok)->
-					process.stdin.destroy()
-					if ok
-						create name
-					else
-						process.exit()
-			else
-				create name
-		else
-			create name
+		async.waterfall [
+
+			# Does a file or directory exist with the same name?
+			(callback)->
+				fs.exists name, (exists)-> callback null, exists
+
+			# Fetch the file/directory's stats
+			(exists, callback)->
+				if exists
+					fs.stat name, callback
+				else
+					callback null, false
+
+			# Confirmation from user if it's a directory
+			(stats, callback)->
+				if stats and stats.isDirectory()
+					program.confirm "\"#{name}\" already exists. Do you want to create the project inside of an existing directory?", (ok)->
+						process.stdin.destroy()
+						callback null, ok
+				else
+					callback null, yes
+
+			# Proceed with creation?
+			(ok, callback)->
+				if ok
+					create name, callback
+				else
+					process.exit()
+
+		], (err)->
+			console.log err if err
 
