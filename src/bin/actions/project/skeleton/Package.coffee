@@ -12,7 +12,7 @@ module.exports = class Package extends Base
 			"version": "0.0.0",
 			"description": "Another frontfax environment",
 			"scripts": {
-				"start": "node_modules/.bin/nf start"
+				"start": "nf start"
 			},
 			"author": "#{@author}",
 			"dependencies": {
