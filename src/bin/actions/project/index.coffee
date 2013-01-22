@@ -85,7 +85,7 @@ exports.new = ->
 				if ok
 					create name, callback
 				else
-					process.exit()
+					callback()
 
 		], (err)->
 			console.log err if err
