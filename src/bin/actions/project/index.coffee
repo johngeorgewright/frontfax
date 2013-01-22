@@ -1,8 +1,26 @@
 async    = require 'async'
+path     = require 'path'
+mkdirp   = require 'mkdirp'
 skeleton = require './skeleton'
 fs       = require 'fs'
 
 exports.new = ->
+	createAssets = (base, callback)->
+		assetsDir = path.resolve base, 'assets'
+		less      = path.join assetsDir, 'less'
+		js        = path.join assetsDir, 'js'
+		css       = path.join assetsDir, 'css'
+		images    = path.join assetsDir, 'images'
+		stat      = path.resolve base, 'static'
+
+		async.parallel [
+			(callback)-> mkdirp less, callback
+			(callback)-> mkdirp js, callback
+			(callback)-> mkdirp css, callback
+			(callback)-> mkdirp images, callback
+			(callback)-> mkdirp stat, callback
+		], callback
+
 	create = (name)->
 		pckge = new skeleton.Package
 			name   : name
@@ -18,12 +36,16 @@ exports.new = ->
 		config = new skeleton.Config
 			base : name
 
-		async.series [
+		async.parallel [
 			(callback)-> pckge.render callback
 			(callback)-> gitignore.render callback
 			(callback)-> procfile.render callback
 			(callback)-> config.render callback
-			(callback)->
+			(callback)-> createAssets name, callback
+		], (err)->
+			if err
+				console.log err
+			else
 				console.log """
 
 					Now run:
@@ -31,8 +53,6 @@ exports.new = ->
 						npm i
 
 					"""
-				callback()
-		]
 
 	->
 		program = arguments[arguments.length-1]
