@@ -18,37 +18,44 @@ task 'build', 'Builds the JavaScript files', (options)->
 	if pck.bin?
 		bins.push file for own key, file of pck.bin
 
-	addShebang = (file, callback)->
-		fs.readFile "#{__dirname}/#{file}", (err, data)->
-			if err
-				callback err
-			else unless data.toString().indexOf('#!') is 0
-				data = "#!/usr/bin/env node\n\n#{data.toString()}"
-				fs.writeFile file, data, (err)->
-					if err
-						callback err
-					else
-						callback null, data
-			else
-				callback()
+	addShebang = (file, callback=->)->
+		async.waterfall [
+
+			(callback)->
+				fs.readFile path.join(__dirname, file), callback
+
+			(data, callback)->
+				data = data.toString()
+				unless data.indexOf('#!') is 0
+					data = "#!/usr/bin/env node\n\n#{data}"
+					callback null, data
+				else
+					callback null, false
+
+			(data, callback)->
+				if data
+					fs.writeFile file, data, callback
+				else
+					callback()
+
+		], callback
 
 	checkBinaryFiles = (callback=->)->
-		if pck.bin?
-			shebangs = []
-			for file in bins
-				shebangs.push (callback)-> addShebang file, callback
-			async.parallel shebangs, (err, data)->
-				console.log err if err
-			, callback
+		async.forEach bins, addShebang, callback
 
 	copyFile = (file, callback=->)->
 		destFile = file.replace source, dest
-		fs.readFile file, (err, data)->
-			if err
-				callback err
-			else
+		async.waterfall [
+
+			(callback)->
+				fs.readFile file, callback
+
+			(data, callback)->
 				console.log "Copying #{file}"
-				fs.writeFile destFile, data, callback
+				fs.writeFile destFile, data.toString(), callback
+
+		], (err)->
+			callback err, destFile
 
 	destName = (file)->
 		destFile  = file.replace source, dest
@@ -59,13 +66,24 @@ task 'build', 'Builds the JavaScript files', (options)->
 
 	compileFile = (file, callback=->)->
 		destFile = destName file
-		fs.readFile file, (err, data)->
-			if err
-				callback err
-			else
+		async.waterfall [
+
+			(callback)->
+				fs.readFile file, callback
+
+			(data, callback)->
 				console.log "Compiling #{file}"
-				data = cs.compile data.toString(), bare: true
+				try
+					data = cs.compile data.toString(), bare: true
+					callback null, data
+				catch e
+					callback e.message
+
+			(data, callback)->
 				fs.writeFile destFile, data, callback
+
+		], (err)->
+			callback err, destFile
 
 	mirrorDirectory = (sourceDir, callback=->)->
 		destDir = sourceDir.replace source, dest
@@ -77,35 +95,41 @@ task 'build', 'Builds the JavaScript files', (options)->
 		else
 			copyFile file, callback
 
-	removeDest = (file, callback=->)->
+	removedFile = (file, callback=->)->
 		destFile = destName file
 		fs.unlink destFile, (err)->
 			if err
-				console.log err
+				callback err
 			else
 				console.log "Removed #{destFile}"
-				callback()
+				callback null, destFile
 
 	if options.watch
 		stalker.watch source, (err, file)->
-			if err
-				console.log err
-			else
-				mirrorDirectory path.dirname file, (err)->
-					if err
-						console.log err
+
+			async.waterfall [
+
+				(callback)-> callback err
+				(callback)-> mirrorDirectory path.dirname(file), callback
+				(callback)-> modifiedFile file, callback
+				(destFile, callback)->
+					if file in bins
+						addShebang destFile, callback
 					else
-						modifiedFile file, (err)->
-							if err
-								console.log err
-							else
-								destFile = destName file
-								addShebang destFile if destFile in bins
+						callback()
+
+			], (err)->
+				console.log err if err
+
 		, (err, file)->
-			if err
-				console.log err
-			else
-				removeDest file
+
+			async.waterfall [
+
+				(callback)-> callback err
+				(callback)-> removedFile file, callback
+				
+			], (err)->
+				console.log err if err
 
 	else
 		walker = walk.walk 'src'
@@ -113,12 +137,20 @@ task 'build', 'Builds the JavaScript files', (options)->
 		# Mirror directories in the destination directory
 		walker.on 'directory', (root, stats, next)->
 			sourceDir = path.join project, "#{root}/#{stats.name}"
-			mirrorDirectory sourceDir, next
+			mirrorDirectory sourceDir, (err)->
+				if err
+					console.log err
+				else
+					next()
 
 		# Compile .coffee and just copy all other files
 		walker.on 'file', (root, stats, next)->
 			sourceFile = path.join project, "#{root}/#{stats.name}"
-			modifiedFile sourceFile, next
+			modifiedFile sourceFile, (err)->
+				if err
+					console.log err
+				else
+					next()
 
 		# Make sure all bin files have a shebang
 		walker.on 'end', checkBinaryFiles
