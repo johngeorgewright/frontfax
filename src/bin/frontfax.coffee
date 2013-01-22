@@ -3,8 +3,9 @@
 program	= require 'commander'
 actions	= require './actions'
 path    = require 'path'
+pck     = require '../../package.json'
 
-program.version '0.0.1'
+program.version pck.version ? '0.0.0'
 
 program
 	.command('compile:less')
