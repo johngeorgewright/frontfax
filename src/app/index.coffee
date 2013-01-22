@@ -5,6 +5,7 @@ http        = require 'http'
 path        = require 'path'
 app         = express()
 assets      = path.resolve 'assets'
+compile     = require '../bin/actions/compile'
 
 # Basic configuration
 app.configure ->
@@ -57,5 +58,11 @@ app.start = ->
 	server.listen port, ->
 		console.log "Frontfax server listening on port #{port}"
 
-module.exports = app
+app.compileLess = ->
+	compiler = compile.less path.resolve('assets', 'less'), path.resolve('assets', 'css')
+	compiler watch: true
+
+app.compileJs = ->
+	compiler = compile.js path.resolve('assets', 'js'), path.resolve('assets', 'js', 'main.js')
+	compiler watch: true, beautify: true
 
