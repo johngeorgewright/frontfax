@@ -7,8 +7,8 @@ module.exports = class Procfile extends Base
 
 	content: ->
 		"""
-		server: node_modules/.bin/frontfax server:start
-		less: node_modules/.bin/frontfax compile:less -w
-		js: node_modules/.bin/frontfax compile:js -b -w
+		server: frontfax server:start
+		less: frontfax compile:less -w
+		js: frontfax compile:js -b -w
 		"""
 
