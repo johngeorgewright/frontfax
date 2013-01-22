@@ -13,13 +13,7 @@ exports.new = ->
 		images    = path.join assetsDir, 'images'
 		stat      = path.resolve base, 'static'
 
-		async.parallel [
-			(callback)-> mkdirp less, callback
-			(callback)-> mkdirp js, callback
-			(callback)-> mkdirp css, callback
-			(callback)-> mkdirp images, callback
-			(callback)-> mkdirp stat, callback
-		], callback
+		async.forEach [less, js, css, images, stat], mkdirp, callback
 
 	create = (name)->
 		pckge = new skeleton.Package
