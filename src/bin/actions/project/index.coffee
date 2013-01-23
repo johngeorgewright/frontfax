@@ -30,16 +30,12 @@ exports.new = ->
 		config = new skeleton.Config
 			base : name
 
-		frontFaxStart = new skeleton.FrontFaxStart
-			base : name
-
 		async.parallel [
 			(callback)-> pckge.render callback
 			(callback)-> gitignore.render callback
 			(callback)-> procfile.render callback
 			(callback)-> config.render callback
 			(callback)-> createAssets name, callback
-			(callback)-> frontFaxStart.render callback
 		], (err)->
 			if err
 				callback err

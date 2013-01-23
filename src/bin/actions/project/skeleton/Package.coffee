@@ -17,7 +17,7 @@ module.exports = class Package extends Base
 			"author": "#{@author}",
 			"dependencies": {
 				"frontfax": "*",
-				"foreman": "0.0.20"
+				"foreman": "git+https://github.com/johngeorgewright/node-foreman.git#windows"
 			}
 		}
 		"""
