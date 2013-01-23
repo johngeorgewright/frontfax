@@ -17,7 +17,7 @@ module.exports = class Package extends Base
 			"author": "#{@author}",
 			"dependencies": {
 				"frontfax": "*",
-				"foreman": "0.0.22"
+				"foreman": "0.0.23"
 			}
 		}
 		"""
