@@ -5,7 +5,6 @@ http        = require 'http'
 path        = require 'path'
 app         = express()
 assets      = path.resolve 'assets'
-compile     = require '../bin/actions/compile'
 
 # Basic configuration
 app.configure ->
@@ -42,10 +41,17 @@ app.use express.static path.resolve 'static'
 if config.base? and config.base
 	child = app
 	app   = express()
+
 	app.configure ->
 		app.set 'port', child.get 'port'
 		app.use controllers.proxy.buffer() if config.proxy?
+		app.use app.router
 		app.use config.base, child
+
+	baseReg = config.base.replace /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&'
+	baseReg = new RegExp "^(?!#{baseReg})"
+	app.get baseReg, (req, res)->
+		res.redirect "#{config.base}#{req.originalUrl}"
 
 # Proxy unsuccessfull requests to a configured server
 if config.proxy?
