@@ -26,12 +26,12 @@ exports.js = (source, dest)->
 
 			walker.on 'end', ->
 				if files.length > 0
-					callback "Combining all files from #{source} to #{dest}"
+					console.log "Combining all files from #{source} to #{dest}"
 					result = UglifyJS.minify files,
 						output:
 							beautify: program.beautify ? false
 					fs.writeFile dest, result.code, (err)->
-						callback err if err
+						console.log err if err
 						combiningJs = no
 				else
 					async.waterfall [
@@ -43,16 +43,16 @@ exports.js = (source, dest)->
 								callback null
 					], (err)->
 						if err
-							callback err
+							console.log err
 						else
-							callback "Removed #{dest}"
+							console.log "Removed #{dest}"
 
 	(program)->
 		modify = (err, file)->
 			if err
-				callback err
+				console.log err
 			else
-				compile program, callback
+				compile program
 
 		mkdirp path.dirname(dest), ->
 			if program.watch
