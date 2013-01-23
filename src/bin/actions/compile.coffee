@@ -3,10 +3,11 @@ stalker = require 'stalker'
 mkdirp  = require 'mkdirp'
 path    = require 'path'
 walk    = require 'walk'
-exec    = require('child_process').exec
+async   = require 'async'
+less    = require 'less'
 bin     = path.join __dirname, '..', '..', '..', 'node_modules', '.bin'
 
-exports.js = (source, dest, callback(msg)=->console.log(msg))->
+exports.js = (source, dest)->
 
 	combiningJs = no
 	UglifyJS    = require 'uglify-js'
@@ -33,7 +34,14 @@ exports.js = (source, dest, callback(msg)=->console.log(msg))->
 						callback err if err
 						combiningJs = no
 				else
-					fs.unlink dest, (err)->
+					async.waterfall [
+						(callback)-> fs.exists dest, (exists)-> callback null, exists
+						(exists, callback)->
+							if exists
+								fs.unlink dest, callback
+							else
+								callback null
+					], (err)->
 						if err
 							callback err
 						else
@@ -52,8 +60,10 @@ exports.js = (source, dest, callback(msg)=->console.log(msg))->
 			else
 				compile program
 
-exports.less = (source, dest, callback(msg)=->console.logmsg))->
+exports.less = (source, dest)->
 
+	source        = path.resolve source
+	dest          = path.resolve dest
 	compilingLess = []
 
 	cssName = (lessName)->
@@ -63,50 +73,55 @@ exports.less = (source, dest, callback(msg)=->console.logmsg))->
 		buildDir  = path.dirname name
 		"#{buildDir}/#{basename}"
 
-	compile = (file)->
-		if path.extname(file) is '.less' and file not in compilingLess
-			compilingLess.push file
-			build = cssName file
-			callback "Compiling #{file}"
-			mkdirp path.dirname(build), (err)->
-				if err
-					callback err
-				else
-					exec "#{bin}/lessc #{file} #{build}", (error, stdout, stderr)->
-						if error
-							callback error.message
-						else if stderr
-							callback stderr
-						else
-							callback stdout
-							callback "Created #{build}"
-						compilingLess.splice compilingLess.indexOf(file), 1
+	compile = (err, file, callback=->)->
+		return callback() unless path.extname(file) is '.less' and file not in compilingLess
 
-	modify = (err, file)->
-		if err
+		compilingLess.push file
+		build = cssName file
+		console.log "Compiling #{file} to #{build}"
+
+		async.waterfall [
+
+			(callback)->       callback err
+			(callback)->       mkdirp path.dirname(build), (err)-> callback err
+			(callback)->       fs.readFile file, callback
+			(data, callback)-> less.render data.toString(), callback
+			(css, callback)->  fs.writeFile build, css, callback
+			
+		], (err)->
+			console.log err if err
+			compilingLess.splice compilingLess.indexOf(file), 1
 			callback err
-		else
-			compile file
 
-	remove = (err, file)->
-		if err
-			callback err
-		else
-			file = cssName file
-			fs.unlink file, (err)->
-				if err
-					callback err
+	remove = (err, file, callback=->)->
+		return callback() unless path.extname(file) is '.less'
+
+		build = cssName file
+		console.log "Removing #{build}"
+
+		async.waterfall [
+
+			(callback)-> callback err
+			(callback)-> fs.exists build, (exists)-> callback null, exists
+			(exists, callback)->
+				if exists
+					fs.unlink build, callback
 				else
-					callback "Removed #{file}"
-
+					callback()
+			
+		], (err)->
+			console.log err if err
+			callback err
+		
 	(program)->
 
-		mkdirp source, ->
-			if program.watch
-				stalker.watch source, modify, remove
+		mkdirp source, (err)->
+			if err
+				console.log err
+			else if program.watch
+				stalker.watch source, compile, remove
 			else
 				walker = walk.walk source
 				walker.on 'file', (root, stats, next)->
-					compile "#{root}/#{stats.name}"
-					next()
+					compile null, "#{root}/#{stats.name}", next
 

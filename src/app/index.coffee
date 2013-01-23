@@ -58,11 +58,5 @@ app.start = ->
 	server.listen port, ->
 		console.log "Frontfax server listening on port #{port}"
 
-app.compileLess = ->
-	compiler = compile.less path.resolve('assets', 'less'), path.resolve('assets', 'css')
-	compiler watch: true
-
-app.compileJs = ->
-	compiler = compile.js path.resolve('assets', 'js'), path.resolve('assets', 'js', 'main.js')
-	compiler watch: true, beautify: true
+module.exports = app
 
