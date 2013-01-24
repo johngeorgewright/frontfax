@@ -30,12 +30,16 @@ exports.new = ->
 		config = new skeleton.Config
 			base : name
 
+		start = new skeleton.Start
+			base : name
+
 		async.parallel [
 			(callback)-> pckge.render callback
 			(callback)-> gitignore.render callback
 			(callback)-> procfile.render callback
 			(callback)-> config.render callback
 			(callback)-> createAssets name, callback
+			(callback)-> start.render callback
 		], (err)->
 			if err
 				callback err
