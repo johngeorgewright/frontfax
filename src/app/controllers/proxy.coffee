@@ -1,15 +1,6 @@
-httpProxy = require 'http-proxy'
+request = require 'request'
 
-exports.request = (options)->
-	proxy = new httpProxy.RoutingProxy()
-	path  = ''
-	
+exports.request = (url)->
 	(req, res)->
-		options.buffer = req.proxyBuffer if req.proxyBuffer?
-		proxy.proxyRequest req, res, options
-
-exports.buffer = ->
-	(req, res, next)->
-		req.proxyBuffer = httpProxy.buffer req
-		next()
+		req.pipe(request url + req.originalUrl).pipe res
 

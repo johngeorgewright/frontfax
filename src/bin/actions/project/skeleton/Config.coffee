@@ -14,10 +14,7 @@ module.exports = class Config extends Base
 				"css": "/r/SysConfig/WebPortal/:project/_files/css",
 				"js": "/r/SysConfig/WebPortal/:project/_files/js"
 			},
-			"proxy": {
-				"host": "google.com",
-				"port": 80
-			}
+			"proxy": "http://www.google.com.au"
 		}
 		"""
 
