@@ -6,6 +6,7 @@ walk    = require 'walk'
 async   = require 'async'
 less    = require 'less'
 bin     = path.join __dirname, '..', '..', '..', 'node_modules', '.bin'
+dirname = path.resolve '.'
 
 exports.js = (source, dest)->
 
@@ -26,7 +27,7 @@ exports.js = (source, dest)->
 
 			walker.on 'end', ->
 				if files.length > 0
-					console.log "Combining all files from #{source} to #{dest}"
+					console.log "Combining all files from #{path.relative dirname, source} to #{path.relative dirname, dest}"
 					result = UglifyJS.minify files,
 						output:
 							beautify: program.beautify ? false
@@ -45,7 +46,7 @@ exports.js = (source, dest)->
 						if err
 							console.log err
 						else
-							console.log "Removed #{dest}"
+							console.log "Removed #{path.relative dirname, dest}"
 
 	(program)->
 		modify = (err, file)->
@@ -78,7 +79,7 @@ exports.less = (source, dest)->
 
 		compilingLess.push file
 		build = cssName file
-		console.log "Compiling #{file} to #{build}"
+		console.log "Compiling #{path.relative dirname, file} to #{path.relative dirname, build}"
 
 		async.waterfall [
 
@@ -97,7 +98,7 @@ exports.less = (source, dest)->
 		return callback() unless path.extname(file) is '.less'
 
 		build = cssName file
-		console.log "Removing #{build}"
+		console.log "Removing #{path.relative dirname, build}"
 
 		async.waterfall [
 
