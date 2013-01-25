@@ -5,11 +5,15 @@ actions	= require './actions'
 path    = require 'path'
 pck     = require '../../package.json'
 
+list = (val)-> val.split ','
+
 program.version pck.version ? '0.0.0'
 
 program
 	.command('compile:less')
 	.description('Compiles less files and watches for any changes')
+	.option('-b, --beautify', 'Beautifies the output compiled output')
+	.option('-p, --paths <list>', 'A list of paths to use as include paths', list)
 	.option('-w, --watch', 'Watches the source directory for changes')
 	.action actions.compile.less 'assets/less', 'assets/css'
 

@@ -74,25 +74,37 @@ exports.less = (source, dest)->
 		buildDir  = path.dirname name
 		"#{buildDir}/#{basename}"
 
-	compile = (err, file, callback=->)->
-		return callback() unless path.extname(file) is '.less' and file not in compilingLess
+	compile = (options)->
+		compress = not (options.beautify ? no)
+		paths    = options.paths or []
 
-		compilingLess.push file
-		build = cssName file
-		console.log "Compiling #{path.relative dirname, file} to #{path.relative dirname, build}"
+		paths = [paths] unless paths instanceof Array
+		paths.unshift source
 
-		async.waterfall [
+		(err, file, callback=->)->
+			return callback() unless path.extname(file) is '.less' and file not in compilingLess
 
-			(callback)->       callback err
-			(callback)->       mkdirp path.dirname(build), (err)-> callback err
-			(callback)->       fs.readFile file, callback
-			(data, callback)-> less.render data.toString(), callback
-			(css, callback)->  fs.writeFile build, css, callback
-			
-		], (err)->
-			console.log err if err
-			compilingLess.splice compilingLess.indexOf(file), 1
-			callback err
+			compilingLess.push file
+			build = cssName file
+			console.log "Compiling #{path.relative dirname, file} to #{path.relative dirname, build}"
+
+			async.waterfall [
+
+				(callback)-> callback err
+				(callback)-> mkdirp path.dirname(build), (err)-> callback err
+				(callback)-> fs.readFile file, callback
+
+				(data, callback)->
+					parser = new less.Parser paths: paths, filename: file
+					parser.parse data.toString(), callback
+
+				(tree, callback)->
+					fs.writeFile build, tree.toCSS(compress: compress), callback
+				
+			], (err)->
+				console.log err if err
+				compilingLess.splice compilingLess.indexOf(file), 1
+				callback err
 
 	remove = (err, file, callback=->)->
 		return callback() unless path.extname(file) is '.less'
@@ -120,9 +132,9 @@ exports.less = (source, dest)->
 			if err
 				console.log err
 			else if program.watch
-				stalker.watch source, compile, remove
+				stalker.watch source, compile(program), remove
 			else
 				walker = walk.walk source
 				walker.on 'file', (root, stats, next)->
-					compile null, "#{root}/#{stats.name}", next
+					compile(program) null, "#{root}/#{stats.name}", next
 
