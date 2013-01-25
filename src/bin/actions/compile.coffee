@@ -76,13 +76,14 @@ exports.less = (source, dest)->
 
 	compile = (options)->
 		compress = not (options.beautify ? no)
+		mainFile = options.main ? no
 		paths    = options.paths or []
-
-		paths = [paths] unless paths instanceof Array
+		paths    = [paths] unless paths instanceof Array
+		paths    = paths.map (p)-> path.join dirname, p
 		paths.unshift source
 
-		(err, file, callback=->)->
-			return callback() unless path.extname(file) is '.less' and file not in compilingLess
+		compileFile = (file, next=->)->
+			return next() unless path.extname(file) is '.less' and file not in compilingLess
 
 			compilingLess.push file
 			build = cssName file
@@ -90,51 +91,72 @@ exports.less = (source, dest)->
 
 			async.waterfall [
 
-				(callback)-> callback err
 				(callback)-> mkdirp path.dirname(build), (err)-> callback err
 				(callback)-> fs.readFile file, callback
 
 				(data, callback)->
-					parser = new less.Parser paths: paths, filename: file
-					parser.parse data.toString(), callback
+					try
+						parser = new less.Parser paths: paths, filename: file
+						parser.parse data.toString(), callback
+					catch e
+						callback e
 
 				(tree, callback)->
-					fs.writeFile build, tree.toCSS(compress: compress), callback
+					try
+						data = tree.toCSS compres: compress
+						fs.writeFile build, data, callback
+					catch e
+						callback e
+				
+			], (err)->
+				if err
+					err = err.message if err.message
+					console.log "ERROR: #{err}"
+				compilingLess.splice compilingLess.indexOf(file), 1
+				next err
+
+		compileAll = ->
+			walker = walk.walk source
+			walker.on 'file', (root, stats, next)->
+				compileFile path.join(root, stats.name), next
+
+		if mainFile
+			mainFile = path.join source, mainFile
+			fs.exists mainFile, (exists)->
+				if exists
+					compileFile mainFile
+				else
+					compileAll()
+		else
+			compileAll()
+
+	remove = (options)->
+		(err, file)->
+			return unless path.extname(file) is '.less'
+
+			build = cssName file
+			console.log "Removing #{path.relative dirname, build}"
+
+			async.waterfall [
+
+				(callback)-> callback err
+				(callback)-> fs.exists build, (exists)-> callback null, exists
+				(exists, callback)->
+					if exists
+						fs.unlink build, callback
+					else
+						callback()
 				
 			], (err)->
 				console.log err if err
-				compilingLess.splice compilingLess.indexOf(file), 1
-				callback err
-
-	remove = (err, file, callback=->)->
-		return callback() unless path.extname(file) is '.less'
-
-		build = cssName file
-		console.log "Removing #{path.relative dirname, build}"
-
-		async.waterfall [
-
-			(callback)-> callback err
-			(callback)-> fs.exists build, (exists)-> callback null, exists
-			(exists, callback)->
-				if exists
-					fs.unlink build, callback
-				else
-					callback()
-			
-		], (err)->
-			console.log err if err
-			callback err
+				compile options
 		
 	(program)->
-
 		mkdirp source, (err)->
 			if err
 				console.log err
 			else if program.watch
-				stalker.watch source, compile(program), remove
+				stalker.watch source, ( (err, file)-> compile(program) ), remove(program)
 			else
-				walker = walk.walk source
-				walker.on 'file', (root, stats, next)->
-					compile(program) null, "#{root}/#{stats.name}", next
+				compile program
 

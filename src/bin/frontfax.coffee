@@ -13,6 +13,7 @@ program
 	.command('compile:less')
 	.description('Compiles less files and watches for any changes')
 	.option('-b, --beautify', 'Beautifies the output compiled output')
+	.option('-m, --main [file]', 'If used, only this file will be compiled')
 	.option('-p, --paths <list>', 'A list of paths to use as include paths', list)
 	.option('-w, --watch', 'Watches the source directory for changes')
 	.action actions.compile.less 'assets/less', 'assets/css'
