@@ -47,7 +47,7 @@ if config.base? and config.base
 		res.redirect "#{config.base}#{req.originalUrl}"
 
 # Proxy unsuccessfull requests to a configured server
-if config.proxy?
+if config.proxy? and config.proxy
 	app.use controllers.proxy.request config.proxy
 
 # Starts the app
