@@ -103,7 +103,7 @@ exports.less = (source, dest)->
 
 				(tree, callback)->
 					try
-						data = tree.toCSS compres: compress
+						data = tree.toCSS compress: compress
 						fs.writeFile build, data, callback
 					catch e
 						callback e
