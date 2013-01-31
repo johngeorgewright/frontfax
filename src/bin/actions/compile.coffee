@@ -152,11 +152,17 @@ exports.less = (source, dest)->
 				compile options
 		
 	(program)->
+		program.paths ?= []
+
+		watcher = (dir)->
+			stalker.watch dir, ( (err, file)-> compile(program) ), remove(program)
+
 		mkdirp source, (err)->
 			if err
 				console.log err
 			else if program.watch
-				stalker.watch source, ( (err, file)-> compile(program) ), remove(program)
+				watcher source
+				watcher p for p in program.paths
 			else
 				compile program
 
