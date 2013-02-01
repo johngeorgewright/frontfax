@@ -28,6 +28,9 @@ if config.assets?.css?
 if config.assets?.js?
 	app.use config.assets.js, express.static path.join assets, 'js'
 
+# Try and see if the correct jade file exists
+app.use controllers.jade.render path.resolve 'static'
+
 # Lastly look for anything in the static directory
 app.use express.static path.resolve 'static'
 
