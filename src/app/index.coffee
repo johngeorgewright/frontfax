@@ -25,7 +25,8 @@ for arr in arrs
       app.use staticPath, express.static path.join assets, arr
 
 # Try and see if the correct jade file exists
-app.use controllers.jade.render path.resolve 'static'
+# TODO: This breaks proxy
+#app.use controllers.jade.render path.resolve 'static'
 
 # Lastly look for anything in the static directory
 app.use express.static path.resolve 'static'
