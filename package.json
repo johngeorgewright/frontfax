@@ -4,10 +4,10 @@
   "description": "Development environment for frontend developers at Fairfax Media.",
   "main": "build/app/index.js",
   "bin": {
-    "frontfax": "build/bin/frontfax.js"
+    "frontfax": "bin/frontfax"
   },
   "scripts": {
-    "prepublish": "cake build"
+    "prepublish": "coffee -c -o build src"
   },
   "author": "John Wright <john.wright@fairfaxmedia.com.au>",
   "dependencies": {
