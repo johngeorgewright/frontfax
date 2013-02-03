@@ -7,6 +7,12 @@ app         = express()
 assets      = path.resolve 'assets'
 arrs        = ['images', 'css', 'js']
 
+# Auth
+if config.auth?
+  throw new Error "You need to supply at least a username" unless config.auth.username?
+  throw new Error "You also need to supply a password" unless config.auth.password?
+  app.use express.basicAuth config.auth.username, config.auth.password
+
 # Basic configuration
 app.configure ->
 	app.set 'port', process.env.PORT or 8080
