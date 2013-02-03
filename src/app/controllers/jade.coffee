@@ -1,24 +1,32 @@
-jade  = require 'jade'
-fs    = require 'fs'
-path  = require 'path'
+jade	= require 'jade'
+fs		= require 'fs'
+path	= require 'path'
 async = require 'async'
 
 exports.render = (sourceDir)->
 	
 	(req, res, next)->
 
-		source  = req.path
+		source	= req.path
 		extname = path.extname source
 
 		unless extname in ['', '.html']
 			next()
 
 		else
-			source  = path.basename source, extname
-			source  = 'index' if source is ''
+			source	= path.basename source, extname
+			source	= 'index' if source is ''
 			source += '.jade'
-			source  = path.join sourceDir, source
+			source	= path.join sourceDir, source
 
+			# Lets not go async
+			if fs.existsSync source
+				data = fs.readFileSync source
+				compiler = jade.compile data.toString(), pretty:true, filename:source
+				res.type 'html'
+				res.send compiler()
+
+			###
 			async.waterfall [
 
 				(callback)->
@@ -46,4 +54,5 @@ exports.render = (sourceDir)->
 				else
 					res.type 'html'
 					res.send output
+			###
 
