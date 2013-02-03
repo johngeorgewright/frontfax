@@ -5,6 +5,7 @@ http        = require 'http'
 path        = require 'path'
 app         = express()
 assets      = path.resolve 'assets'
+arrs        = ['images', 'css', 'js']
 
 # Basic configuration
 app.configure ->
@@ -16,17 +17,12 @@ app.configure ->
 	app.use app.router
 	app.use express.errorHandler()
 
-# Fetch images from a configured source
-if config.assets?.images?
-	app.use config.assets.images, express.static path.join assets, 'images'
-
-# CSS
-if config.assets?.css?
-	app.use config.assets.css, express.static path.join assets, 'css'
-
-# Fetch js from a configured directory
-if config.assets?.js?
-	app.use config.assets.js, express.static path.join assets, 'js'
+# Fetch static content
+for arr in arrs
+  if config.assets?[arr]?
+    config.assets[arr] = [config.assets[arr]] unless config.assets[arr] instanceof Array
+    for staticPath in config.assets[arr]
+      app.use staticPath, express.static path.join assets, arr
 
 # Try and see if the correct jade file exists
 app.use controllers.jade.render path.resolve 'static'
