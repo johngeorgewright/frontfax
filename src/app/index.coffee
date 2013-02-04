@@ -3,15 +3,15 @@ controllers = require './controllers'
 express     = require 'express'
 http        = require 'http'
 path        = require 'path'
-app         = express()
+app	        = express()
 assets      = path.resolve 'assets'
-arrs        = ['images', 'css', 'js']
+assetTypes  = ['images', 'css', 'js']
 
 # Auth
 if config.auth?
-  throw new Error "You need to supply at least a username" unless config.auth.username?
-  throw new Error "You also need to supply a password" unless config.auth.password?
-  app.use express.basicAuth config.auth.username, config.auth.password
+	throw new Error "You need to supply at least a username" unless config.auth.username?
+	throw new Error "You also need to supply a password" unless config.auth.password?
+	app.use express.basicAuth config.auth.username, config.auth.password
 
 # Basic configuration
 app.configure ->
@@ -24,11 +24,12 @@ app.configure ->
 	app.use express.errorHandler()
 
 # Fetch static content
-for arr in arrs
-  if config.assets?[arr]?
-    config.assets[arr] = [config.assets[arr]] unless config.assets[arr] instanceof Array
-    for staticPath in config.assets[arr]
-      app.use staticPath, express.static path.join assets, arr
+for assetType in assetTypes
+	if config.assets?[assetType]?
+		assetTypePaths = config.assets[assetType]
+		assetTypePaths = [assetTypePaths] unless assetTypePaths instanceof Array
+		for assetTypePath in assetTypePaths
+			app.use assetTypePath, express.static path.join assets, assetType
 
 # Try and see if the correct jade file exists
 # TODO: This breaks proxy
@@ -40,7 +41,7 @@ app.use express.static path.resolve 'static'
 # Add a base URL to all requests
 if config.base? and config.base
 	child = app
-	app   = express()
+	app	 = express()
 
 	app.configure ->
 		app.set 'port', child.get 'port'
@@ -59,7 +60,7 @@ if config.proxy? and config.proxy
 # Starts the app
 app.start = ->
 	server = http.createServer app
-	port   = app.get 'port'
+	port	 = app.get 'port'
 	server.listen port, ->
 		console.log "Frontfax server listening on port #{port}"
 
