@@ -2,16 +2,16 @@ Base = require './Base'
 
 module.exports = class GitIgnore extends Base
 
-  filename: ->
-    '.gitignore'
+	filename: ->
+		'.gitignore'
 
-  content: ->
-    """
-	assets/css
-	config/runtime.json
-    node_modules
-    .exrc
-    *.log
-    *.swp
-    """
+	content: ->
+		"""
+		assets/css
+		config/runtime.json
+		node_modules
+		.exrc
+		*.log
+		*.swp
+		"""
 
