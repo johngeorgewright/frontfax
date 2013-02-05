@@ -24,7 +24,8 @@
     "stalker": "0.0.20",
     "uglify-js": "2.2.3",
     "walk": "2.2.1",
-    "jade": "~0.28.1"
+    "jade": "~0.28.1",
+    "coffeecup": "~0.3.19"
   },
   "devDependencies": {
     "coffee-script": "1.4.0"

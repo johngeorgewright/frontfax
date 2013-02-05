@@ -32,8 +32,10 @@ for assetType in assetTypes
 			app.use assetTypePath, express.static path.join assets, assetType
 
 # Try and see if the correct jade file exists
-# TODO: This breaks proxy
 app.use controllers.jade.render path.resolve 'static'
+
+# Try and see if the correct coffeecup file exists
+app.use controllers.coffeecup.render path.resolve 'static'
 
 # Lastly look for anything in the static directory
 app.use express.static path.resolve 'static'
