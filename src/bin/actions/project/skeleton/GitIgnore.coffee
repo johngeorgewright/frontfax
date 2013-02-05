@@ -7,6 +7,8 @@ module.exports = class GitIgnore extends Base
 
   content: ->
     """
+	assets/css
+	config/runtime.json
     node_modules
     .exrc
     *.log
