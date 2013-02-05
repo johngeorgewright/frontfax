@@ -25,6 +25,8 @@ exports.render = (sourceDir)->
 				compiler = jade.compile data.toString(), pretty:true, filename:source
 				res.type 'html'
 				res.send compiler()
+			else
+				next()
 
 			###
 			async.waterfall [
