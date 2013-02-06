@@ -5,25 +5,7 @@ actions	= require './actions'
 path    = require 'path'
 pck     = require '../../package.json'
 
-list = (val)-> val.split ','
-
 program.version pck.version ? '0.0.0'
-
-program
-	.command('compile:less')
-	.description('Compiles less files and watches for any changes')
-	.option('-b, --beautify', 'Beautifies the output compiled output')
-	.option('-m, --main [file]', 'If used, only this file will be compiled')
-	.option('-p, --paths <list>', 'A list of paths to use as include paths', list)
-	.option('-w, --watch', 'Watches the source directory for changes')
-	.action actions.compile.less 'assets/less', 'assets/css'
-
-program
-	.command('compile:js')
-	.description('Combines all js files in to one file')
-	.option('-b, --beautify', 'Beautifies the output')
-	.option('-w, --watch', 'Watches the source diretory for changes')
-	.action actions.compile.js 'assets/js', 'assets/js/main.js'
 
 program
 	.command('project:new')
