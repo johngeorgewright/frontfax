@@ -23,7 +23,9 @@
     "coffeecup": "~0.3.19",
     "grunt": "~0.3.17",
     "grunt-contrib-uglify": "~0.1.0",
-    "grunt-contrib-less": "~0.3.2"
+    "grunt-contrib-less": "~0.3.2",
+    "socket.io": "~0.9.13",
+    "gaze": "~0.3.2"
   },
   "devDependencies": {
     "coffee-script": "1.4.0"

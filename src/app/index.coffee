@@ -19,7 +19,9 @@ app.configure ->
 	app.set 'views', path.join __dirname, 'views'
 	app.set 'view engine', 'jade'
 	app.use express.logger 'dev'
+	app.use controllers.util.extractPort()
 	app.use express.methodOverride()
+	app.use controllers.socket.refreshClient()
 	app.use app.router
 	app.use express.errorHandler()
 
@@ -65,6 +67,7 @@ app.start = ->
 	port	 = app.get 'port'
 	server.listen port, ->
 		console.log "Frontfax server listening on port #{port}"
+		controllers.socket.refreshServer server
 
 module.exports = app
 
