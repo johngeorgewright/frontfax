@@ -5,18 +5,21 @@ gaze = require 'gaze'
 exports.refreshServer = (server)->
 	ioServer = io.listen server, 'log level': 2
 	ioServer.sockets.on 'connection', (socket)->
-		gaze '**/*.*', (err, watcher)->
-			@on 'all', (event, filename)->
-				switch path.extname filename
-					when '.css'
-						console.log 'Refreshing your CSS'
-						socket.emit 'refreshCSS'
-					when '.js', '.html', '.png', '.gif'
-						console.log 'Refreshing your page'
-						socket.emit 'refreshAll'
+
+		gaze '**/*.css', (err, watcher)->
+			unless err
+				@on 'all', (event, filename)->
+					console.log 'Refreshing your CSS'
+					socket.emit 'refreshCSS'
+
+		gaze ['assets/**/*.js', 'static/**/*.*', 'images/**.*'], (err, watcher)->
+			unless err
+				@on 'all', (event, filename)->
+					console.log 'Refreshing your page'
+					socket.emit 'refreshAll'
 
 exports.refreshClient = (app)->
-	clientCode = (hostname)->
+	clientCode = ->
 		"""
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/frontfax/refresh.js"></script>
@@ -37,7 +40,7 @@ exports.refreshClient = (app)->
 				newChunk = new Buffer newChunk, encoding
 				try
 					@set 'Content-Length', newChunk.length
-					console.log 'Changed body'
+					chunk = newChunk
 				catch e
 					# The response is from a proxy
 		writer.call this, chunk, encoding
