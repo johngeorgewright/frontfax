@@ -7,6 +7,7 @@ exports.request = (url)->
 		requestUrl = url + req.originalUrl
 
 		if req.method is 'GET' and path.extname(req.path) in ['.html', '']
+			req.headers['accept-encoding'] = ''
 			req.pipe request requestUrl, (err, proxyRes, body)->
 				body = socket.addClientCode body
 				res.type 'text/html'
