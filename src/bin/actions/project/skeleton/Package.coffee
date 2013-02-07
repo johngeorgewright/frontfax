@@ -1,4 +1,5 @@
 Base = require './Base'
+pack = require '../../../../../package.json'
 
 module.exports = class Package extends Base
 
@@ -13,10 +14,12 @@ module.exports = class Package extends Base
 			"description": "Another frontfax environment",
 			"scripts": {
 				"start": "nf start",
-        "prepublish": "grunter dist --force"
+				"prepublish": "grunter prepublish --force"
 			},
 			"author": "#{@author}",
 			"dependencies": {
+				"frontfax": "#{pack.version}",
+				"config": "0.4.18",
 				"foreman": "0.0.23",
 				"grunter": "~0.0.1",
 				"grunt-contrib-less": "~0.3.2",

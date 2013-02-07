@@ -16,8 +16,6 @@ if config.auth?
 # Basic configuration
 app.configure ->
 	app.set 'port', process.env.PORT or 8080
-	app.set 'views', path.join __dirname, 'views'
-	app.set 'view engine', 'jade'
 	app.use express.logger 'dev'
 	app.use controllers.util.extractPort()
 	app.use express.methodOverride()
@@ -27,8 +25,8 @@ app.configure ->
 
 # Fetch static content
 for assetType in assetTypes
-	if config.assets?[assetType]?
-		assetTypePaths = config.assets[assetType]
+	if config[assetType]?.paths?
+		assetTypePaths = config[assetType].paths
 		assetTypePaths = [assetTypePaths] unless assetTypePaths instanceof Array
 		for assetTypePath in assetTypePaths
 			app.use assetTypePath, express.static path.join assets, assetType

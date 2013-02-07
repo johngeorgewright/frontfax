@@ -8,7 +8,7 @@ module.exports = class Procfile extends Base
 	content: ->
 		"""
 		server: frontfax start
-		less: grunter watch:less:dev --force
-		js: grunter watch:js:dev
+		less: grunter watcher:less:dev --force
+		js: grunter watcher:js:dev
 		"""
 

@@ -9,12 +9,49 @@ module.exports = class Config extends Base
 		"""
 		{
 			"base": false,
-			"assets": {
-				"images": "/r/SysConfig/WebPortal/:project/_files/images",
-				"css": "/r/SysConfig/WebPortal/:project/_files/css",
-				"js": "/r/SysConfig/WebPortal/:project/_files/js"
+			"images": {
+				"paths": "/images"
 			},
-			"proxy": "http://www.google.com.au"
+			"css": {
+				"paths": "/stylesheets"
+			},
+			"less": {
+				"dev": {
+					"options": {
+						"paths": ["assets/less"]
+					},
+					"files": {
+						"assets/css/main.css": "assets/less/main.less"
+					}
+				},
+				"prepublish": {
+					"options": {
+						"paths": "<config:less.dev.options.paths>",
+						"compress": true
+					},
+					"files": "<config:less.dev.files>"
+				}
+			},
+			"js": {
+				"paths": "/js"
+			},
+			"concat": {
+				"js": {
+					"src": "assets/js/**.js",
+					"dest": "assets/js/main.js"
+				}
+			},
+			"watcher": {
+				"less": {
+					"files": ["assets/less/**/*.less"],
+					"tasks": ["less:dev"]
+				},
+				"js": {
+					"files": "assets/js**/*.js",
+					"tasks": ["concat:js"]
+				}
+			},
+			"proxy": false
 		}
 		"""
 
