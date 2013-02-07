@@ -13,12 +13,10 @@ program
 	.action actions.server.start()
 
 program
+  .command('new')
+  .description('Creates a new frontfax project')
   .usage('<name>')
-  .parse(process.argv)
+  .action actions.project.new()
 
-if program.args? and program.args.length > 0
-  actions.project.new() program.args[0], program
-else
-  program.help()
-
+program.parse process.argv
 

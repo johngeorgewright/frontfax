@@ -12,7 +12,8 @@ module.exports = class Package extends Base
 			"version": "0.0.0",
 			"description": "Another frontfax environment",
 			"scripts": {
-				"start": "nf start"
+				"start": "nf start",
+        "prepublish": "grunter dist --force"
 			},
 			"author": "#{@author}",
 			"dependencies": {

@@ -52,7 +52,7 @@ module.exports = class Grunt extends Base
 
 			grunt.loadNpmTasks('grunt-contrib-uglify');
 			grunt.loadNpmTasks('grunt-contrib-less');
-			grunt.registerTask('dist', ['uglify:dist', 'less:dist']);
+			grunt.registerTask('dist', ['less:dist']);
 
 		};
 		"""
