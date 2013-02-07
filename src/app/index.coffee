@@ -21,7 +21,7 @@ app.configure ->
 	app.use express.logger 'dev'
 	app.use controllers.util.extractPort()
 	app.use express.methodOverride()
-	app.use controllers.socket.refreshClient()
+	controllers.socket.refreshClient app
 	app.use app.router
 	app.use express.errorHandler()
 
