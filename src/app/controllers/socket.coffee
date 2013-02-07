@@ -1,6 +1,7 @@
-io   = require 'socket.io'
-path = require 'path'
-gaze = require 'gaze'
+io     = require 'socket.io'
+path   = require 'path'
+gaze   = require 'gaze'
+socket = require '../../lib/socket'
 
 exports.refreshServer = (server)->
 	ioServer = io.listen server, 'log level': 2
@@ -19,12 +20,6 @@ exports.refreshServer = (server)->
 					socket.emit 'refreshAll'
 
 exports.refreshClient = (app)->
-	clientCode = ->
-		"""
-		<script src="/socket.io/socket.io.js"></script>
-		<script src="/frontfax/refresh.js"></script>
-		"""
-
 	app.get '/frontfax/refresh.js', (req, res)->
 		res.sendfile path.join(__dirname, '..', 'public', 'js', 'refresh.js')
 
@@ -36,8 +31,7 @@ exports.refreshClient = (app)->
 		if chunk and html
 			chunk = chunk.toString encoding
 			if chunk.indexOf('</body>') >= 0
-				newChunk = chunk.replace '</body>', "#{clientCode()}</body>"
-				newChunk = new Buffer newChunk, encoding
+				newChunk = socket.addClientCode chunk, encoding
 				try
 					@set 'Content-Length', newChunk.length
 					chunk = newChunk
