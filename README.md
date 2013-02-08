@@ -25,6 +25,7 @@ Your Workspace
 			- css
 			- images
 			- js
+				- src
 			- less
 		- static
 
@@ -112,7 +113,7 @@ Now you can point to one CSS file (`/my/configured/css/path/main.css`) and have 
 
 ### JS Combine
 
-While you're working on any js files they will automatically be combined into assets/js/main.js.
+While you're working on any js files they will automatically be combined from assets/js/src/*.js into assets/js/main.js.
 
 Bugs
 ----
