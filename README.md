@@ -12,7 +12,7 @@ Installation
 Creating a Project
 ------------------
 
-1. Create a project `frontfax project:new myproject`
+1. Create a project `frontfax new myproject`
 2. Install the dependencies `cd myproject && npm i`
 3. Start the server `npm start`
 4. Then [view the server](http://localhost:5000)
@@ -40,7 +40,7 @@ The images, js, css URLs are can configured, but these files will always be acce
 
 The `static` directory is the last place the server looks before proxying the request. This is good for HTML files. You do not need to configure the URL for this as it will consider the root to be accessible from the static directory.
 
-To change the URLs open the `config/default.json` file and edit the `assets.image|css|js` urls. 
+To change the URLs open the `config/default.json` file and edit the `[image|css|js].paths` urls. 
 
 ### LESS
 
