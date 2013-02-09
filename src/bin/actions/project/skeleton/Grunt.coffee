@@ -1,4 +1,4 @@
-Base = require './base'
+Base = require './Base'
 
 module.exports = class Grunt extends Base
 
