@@ -20,6 +20,8 @@ app.configure ->
 	app.use controllers.util.extractPort()
 	app.use express.methodOverride()
 	controllers.socket.refreshClient app
+	if config.replacements
+		controllers.util.replaceInResponse app, config.replacements
 	app.use app.router
 	app.use express.errorHandler()
 
