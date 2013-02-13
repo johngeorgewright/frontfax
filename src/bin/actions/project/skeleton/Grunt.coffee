@@ -7,22 +7,48 @@ module.exports = class Grunt extends Base
 
 	content: ->
 		"""
-		var config = require('config');
+		var config = require('config'),
+		    util   = require('util');
 
 		module.exports = function(grunt) {
 
-			// Project configuration.
-			grunt.initConfig({
-				pkg: '<json:package.json>',
-				concat: config.concat,
-				less: config.less,
-				watch: config.watcher
-			});
+			var gruntConfig = {},
+				key;
 
-			grunt.loadNpmTasks('grunt-contrib-less');
-			grunt.registerTask('watcher:less:dev', ['less:dev', 'watch:less']);
-			grunt.registerTask('watcher:js:dev', ['concat:js', 'watch:js']);
-			grunt.registerTask('prepublish', ['less:prepublish']);
+			for(key in config){
+				if(config.hasOwnProperty(key) && key !== 'watch'){
+					gruntConfig[key] = config[key];
+				}
+			}
+
+			grunt.initConfig(util._extend(gruntConfig, {
+				pkg   : '<json:package.json>',
+				watch : gruntConfig.watcher
+			}));
+
+			if(config.less){
+				grunt.loadNpmTasks('grunt-contrib-less');
+
+				if(config.less.dev && config.watcher && config.watcher.less){
+					grunt.registerTask('watcher:less:dev', ['less:dev', 'watch:less']);
+				}
+
+				if(config.less.prepublish){
+					grunt.registerTask('prepublish', ['less:prepublish']);
+				}
+			}
+
+			if(config.concat && config.watcher.js){
+				grunt.registerTask('watcher:js:dev', ['concat:js', 'watch:js']);
+			}
+
+			if(config.coffee){
+				grunt.loadNpmTasks('grunt-contrib-coffee');
+
+				if(config.coffee.dev && config.watcher && config.watcher.coffee){
+					grunt.registerTask('watcher:coffee:dev', ['coffee:dev', 'watch:coffee']);
+				}
+			}
 
 		};
 		"""

@@ -7,13 +7,14 @@ fs       = require 'fs'
 exports.new = ->
 	createAssets = (base, callback)->
 		assetsDir = path.resolve base, 'assets'
+		coffee    = path.join assetsDir, 'coffee'
 		less      = path.join assetsDir, 'less'
 		js        = path.join assetsDir, 'js', 'src'
 		css       = path.join assetsDir, 'css'
 		images    = path.join assetsDir, 'images'
 		stat      = path.resolve base, 'static'
 
-		async.forEach [less, js, css, images, stat], mkdirp, callback
+		async.forEach [coffee, less, js, css, images, stat], mkdirp, callback
 
 	create = (name, callback=->)->
 		pckge = new skeleton.Package

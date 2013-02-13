@@ -23,7 +23,7 @@ module.exports = class Package extends Base
 				"foreman": "0.0.23",
 				"grunter": "~0.0.1",
 				"grunt-contrib-less": "~0.3.2",
-				"grunt-contrib-uglify": "~0.1.0"
+				"grunt-contrib-coffee": "~0.3.2"
 			}
 		}
 		"""

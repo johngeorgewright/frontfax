@@ -15,6 +15,9 @@ module.exports = class Config extends Base
 			"css": {
 				"paths": "/stylesheets"
 			},
+			"js": {
+				"paths": "/js"
+			},
 			"less": {
 				"dev": {
 					"options": {
@@ -32,8 +35,15 @@ module.exports = class Config extends Base
 					"files": "<config:less.dev.files>"
 				}
 			},
-			"js": {
-				"paths": "/js"
+			"coffee": {
+				"dev": {
+					"options": {
+						"base": true
+					},
+					"files": {
+						"assets/js/src/*.js": ["assets/coffee/**/*.coffee"]
+					}
+				}
 			},
 			"concat": {
 				"js": {
@@ -42,6 +52,10 @@ module.exports = class Config extends Base
 				}
 			},
 			"watcher": {
+				"coffee": {
+					"files": ["assets/coffee/**/*.coffee"],
+					"tasks": ["coffee:dev"]
+				},
 				"less": {
 					"files": ["assets/less/**/*.less"],
 					"tasks": ["less:dev"]
