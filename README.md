@@ -35,6 +35,18 @@ This is the process in which frontfax handles each HTTP request:
 2. Tries to find it in your workspace (assets/images/logo.png). If found the file is returned and the process stops here.
 3. Proxies the request to the configured proxy server and returns the result.
 
+### Proxying
+
+The greatest feature of Frontfax is it's ability to target a proxy server for files that don't exist on your computer. To configure the proxy target open `config/default.json` and change the `proxy` option:
+
+```js
+{
+	...
+	"proxy": "http://www.the.site.im.working.on.com"
+	...
+}
+```
+
 ### URL Configuration
 
 The images, js, css URLs are can configured, but these files will always be accessed from you assets directory.
@@ -114,6 +126,25 @@ Now you can point to one CSS file (`/my/configured/css/path/main.css`) and have 
 ### JS Combine
 
 While you're working on any js files they will automatically be combined from assets/js/src/*.js into assets/js/main.js.
+
+### Templating
+
+While working on your static files in the `static` directory, you can also use a variety of templating languages.
+
+#### [Jade](http://jade-lang.com/)
+
+1. Install jade `npm i jade`
+2. Use the jade extension (`.jade`) when editing your templates
+
+#### [Coffee-Cup](https://github.com/gradus/coffeecup)
+
+1. Install coffee cup `npm i coffeecup`
+2. Use the coffee extension (`.coffee`) when editing your templates
+
+#### [Swig](http://paularmstrong.github.com/swig/)
+
+1. Install consolidate and swig `npm i consolidate swig`
+2. All html files will now be parsed with swig.
 
 Bugs
 ----
