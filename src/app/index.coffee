@@ -61,6 +61,7 @@ try
 	app.engine 'html', cons.swig
 	app.set 'view engine', 'html'
 	swig.init
+		cache      : no
 		root       : staticDir
 		allowError : yes
 	app.use controllers.template.renderer() unless templating
