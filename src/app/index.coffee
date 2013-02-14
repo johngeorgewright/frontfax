@@ -16,17 +16,16 @@ if config.auth?
 	app.use express.basicAuth config.auth.username, config.auth.password
 
 # Basic configuration
-app.configure ->
-	app.set 'port', process.env.PORT or 8080
-	app.set 'views', staticDir
-	app.use express.logger 'dev'
-	app.use controllers.util.extractPort()
-	app.use express.methodOverride()
-	controllers.socket.refreshClient app
-	if config.replacements
-		controllers.util.replaceInResponse app, config.replacements
-	app.use app.router
-	app.use express.errorHandler()
+app.set 'port', process.env.PORT or 8080
+app.set 'views', staticDir
+app.use express.logger 'dev'
+app.use controllers.util.extractPort()
+app.use express.methodOverride()
+controllers.socket.refreshClient app
+if config.replacements
+	controllers.util.replaceInResponse app, config.replacements
+app.use app.router
+app.use express.errorHandler()
 
 # Fetch static content
 for assetType in assetTypes

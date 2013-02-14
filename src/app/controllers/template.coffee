@@ -14,8 +14,6 @@ exports.renderer = ->
 			basename = 'index' if basename is ''
 			source   = "#{path.dirname source}/#{basename}"
 
-			console.log source
-
 			res.render source, (err, str)->
 				if err
 					if err.message is "Failed to lookup view \"#{source}\""
