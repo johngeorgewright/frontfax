@@ -37,6 +37,9 @@ exports.new = ->
 		grunt = new skeleton.Grunt
 			base : name
 
+		server = new skeleton.Server
+			base : name
+
 		async.parallel [
 			(callback)-> pckge.render callback
 			(callback)-> gitignore.render callback
@@ -45,6 +48,7 @@ exports.new = ->
 			(callback)-> createAssets name, callback
 			(callback)-> start.render callback
 			(callback)-> grunt.render callback
+			(callback)-> server.render callback
 		], (err)->
 			if err
 				callback err

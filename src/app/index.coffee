@@ -5,7 +5,9 @@ http        = require 'http'
 path        = require 'path'
 app	        = express()
 assets      = path.resolve 'assets'
+staticDir   = path.resolve 'static'
 assetTypes  = ['images', 'css', 'js']
+templating  = no
 
 # Auth
 if config.auth?
@@ -16,6 +18,7 @@ if config.auth?
 # Basic configuration
 app.configure ->
 	app.set 'port', process.env.PORT or 8080
+	app.set 'views', staticDir
 	app.use express.logger 'dev'
 	app.use controllers.util.extractPort()
 	app.use express.methodOverride()
@@ -34,13 +37,40 @@ for assetType in assetTypes
 			app.use assetTypePath, express.static path.join assets, assetType
 
 # Try and see if the correct jade file exists
-app.use controllers.jade.render path.resolve 'static'
+try
+	require 'jade'
+	app.set 'view engine', 'jade'
+	app.use controllers.template.renderer() unless templating
+	templating = yes
+catch e
+	# No jade installed
 
 # Try and see if the correct coffeecup file exists
-app.use controllers.coffeecup.render path.resolve 'static'
+try
+	cc = require 'coffeecup'
+	app.engine 'coffee', cc.__express
+	app.set 'view engine', 'coffee'
+	app.use controllers.tempalte.renderer() unless templating
+	templating = yes
+catch e
+	# No coffeecup installed
+
+# Swig templates
+try
+	cons = require 'consolidate'
+	swig = require 'swig'
+	app.engine 'html', cons.swig
+	app.set 'view engine', 'html'
+	swig.init
+		root       : staticDir
+		allowError : yes
+	app.use controllers.template.renderer() unless templating
+	templating = yes
+catch e
+	# No swig installed
 
 # Lastly look for anything in the static directory
-app.use express.static path.resolve 'static'
+app.use express.static staticDir
 
 # Add a base URL to all requests
 if config.base? and config.base
