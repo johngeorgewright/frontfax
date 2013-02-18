@@ -16,8 +16,8 @@ contentReplacer = (replacements, method)->
 				newChunk = newChunk.replace replacement.reg, replacement.value
 			try
 				chunk = new Buffer newChunk, encoding
-				if @get 'content-length'
-					@set 'content-length', chunk.length
+				#if @get 'content-length'
+					#@set 'content-length', chunk.length
 		method.call @, chunk, encoding
 
 exports.replaceInResponse = (app, replacements)->
