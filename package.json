@@ -20,7 +20,9 @@
     "module-index": "3.0.2",
     "request": "2.12.0",
     "socket.io": "~0.9.13",
-    "gaze": "~0.3.2"
+    "gaze": "~0.3.2",
+    "bytes": "~0.2.0",
+    "colors": "~0.6.0-1"
   },
   "devDependencies": {
     "coffee-script": "1.4.0",

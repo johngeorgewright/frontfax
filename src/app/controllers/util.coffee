@@ -1,29 +1,38 @@
+util    = require '../../lib/util'
+colors  = require 'colors'
+express = require 'express'
+
 exports.extractPort = ->
 	(req, res, next)->
-		reg   = /:(\d+)/
-		match = req.headers.host.match reg
-
-		if match
-			req.port = parseInt match[1]
-		else
-			req.port = 80
-
+		req.port = res.app.get 'port'
 		next()
 
-exports.replaceInResponse = (app, replacements)->
-	res    = app.response
-	writer = res.write
-
-	res.write = (chunk, encoding)->
+contentReplacer = (replacements, method)->
+	(chunk, encoding)->
 		isText = /text\//.test @get('Content-Type')
-		if chunk and isText
+		if chunk? and isText
 			newChunk = chunk.toString encoding
-			for own key, value of replacements
-				newChunk = newChunk.replace key, value
+			for own key, replacement of replacements
+				newChunk = newChunk.replace replacement.reg, replacement.value
 			try
-				@set 'Content-Length', newChunk.length
-				chunk = newChunk
-			catch e
-				# The response is from a proxy
-		writer.call this, chunk, encoding
+				chunk = new Buffer newChunk, encoding
+				if @get 'content-length'
+					@set 'content-length', chunk.length
+		method.call @, chunk, encoding
+
+exports.replaceInResponse = (app, replacements)->
+	for own key, value of replacements
+		console.log "Will be replacing \"#{key}\" with \"#{value}\""
+		replacements[key] =
+			reg   : new RegExp util.escapeRegExp(key), 'g'
+			value : value
+	
+	res       = app.response
+	res.end   = contentReplacer replacements, res.end
+	res.write = contentReplacer replacements, res.write
+
+exports.loggerFormat = (tokens, req, res)->
+	proxy   = res.getHeader 'proxied'
+	output  = if proxy then 'PROXY '.grey else ''
+	output += express.logger.dev tokens, req, res
 

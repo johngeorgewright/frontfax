@@ -18,12 +18,14 @@ if config.auth?
 # Basic configuration
 app.set 'port', process.env.PORT or 8080
 app.set 'views', staticDir
-app.use express.logger 'dev'
+express.logger.format 'frontfax', controllers.util.loggerFormat
+app.use express.logger 'frontfax'
 app.use controllers.util.extractPort()
 app.use express.methodOverride()
 controllers.socket.refreshClient app
-if config.replacements
-	controllers.util.replaceInResponse app, config.replacements
+config.replacements = {} unless config.replacements
+config.replacements[config.proxy] = "" if config.proxy
+controllers.util.replaceInResponse app, config.replacements
 app.use app.router
 app.use express.errorHandler()
 
