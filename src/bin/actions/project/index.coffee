@@ -14,7 +14,11 @@ exports.new = ->
 		images    = path.join assetsDir, 'images'
 		stat      = path.resolve base, 'static'
 
-		async.forEach [coffee, less, js, css, images, stat], mkdirp, callback
+		async.forEach [coffee, less, js, css, images, stat], mkdirp, (err)->
+			if err
+				callback err
+			else
+				fs.writeFile path.join(assetsDir, 'less', 'main.less'), '', callback
 
 	create = (name, callback=->)->
 		pckge = new skeleton.Package
@@ -88,8 +92,8 @@ exports.new = ->
 			(stats, callback)->
 				if stats and stats.isDirectory()
 					program.confirm "\"#{name}\" already exists. Do you want to create the project inside of an existing directory?", (ok)->
-						process.stdin.destroy()
 						callback null, ok
+						process.stdin.destroy()
 				else
 					callback null, yes
 

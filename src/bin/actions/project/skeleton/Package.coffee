@@ -13,17 +13,20 @@ module.exports = class Package extends Base
 			"version": "0.0.0",
 			"description": "Another frontfax environment",
 			"scripts": {
-				"start": "nf start",
-				"prepublish": "grunter prepublish --force"
+				"start": "nf start"
 			},
 			"author": "#{@author}",
 			"dependencies": {
 				"frontfax": "#{pack.version}",
 				"config": "0.4.18",
 				"foreman": "0.0.23",
-				"grunter": "~0.0.1",
-				"grunt-contrib-less": "~0.3.2",
-				"grunt-contrib-coffee": "~0.3.2"
+				"grunt": "~0.4.0",
+				"grunt-cli": "~0.1.6",
+				"grunt-contrib-coffee": "~0.4.0",
+				"grunt-contrib-concat": "~0.1.2",
+				"grunt-contrib-less": "~0.5.0",
+				"grunt-contrib-uglify": "~0.1.1",
+				"grunt-contrib-watch": "~0.2.0"
 			}
 		}
 		"""

@@ -8,8 +8,8 @@ module.exports = class Procfile extends Base
 	content: ->
 		"""
 		server: node server
-		coffee: grunter watcher:coffee:dev --force
-		less: grunter watcher:less:dev --force
-		js: grunter watcher:js:dev
+		coffee: grunt watcher:coffee --force
+		less: grunt watcher:less --force
+		js: grunt watcher:js --force
 		"""
 

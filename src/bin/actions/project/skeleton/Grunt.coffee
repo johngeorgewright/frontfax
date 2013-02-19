@@ -3,7 +3,7 @@ Base = require './Base'
 module.exports = class Grunt extends Base
 
 	filename: ->
-		'grunt.js'
+		'Gruntfile.js'
 
 	content: ->
 		"""
@@ -13,7 +13,7 @@ module.exports = class Grunt extends Base
 		module.exports = function(grunt) {
 
 			var gruntConfig = {},
-				key;
+				i, key;
 
 			for(key in config){
 				if(config.hasOwnProperty(key) && key !== 'watch'){
@@ -22,31 +22,21 @@ module.exports = class Grunt extends Base
 			}
 
 			grunt.initConfig(util._extend(gruntConfig, {
-				pkg   : '<json:package.json>',
+				pkg   : grunt.file.readJSON('package.json'),
 				watch : gruntConfig.watcher
 			}));
 
-			if(config.less){
-				grunt.loadNpmTasks('grunt-contrib-less');
-
-				if(config.less.dev && config.watcher && config.watcher.less){
-					grunt.registerTask('watcher:less:dev', ['less:dev', 'watch:less']);
-				}
-
-				if(config.less.prepublish){
-					grunt.registerTask('prepublish', ['less:prepublish']);
+			if(gruntConfig.load_npm_tasks){
+				for(i=0; i<gruntConfig.load_npm_tasks.length; i++){
+					grunt.loadNpmTasks(gruntConfig.load_npm_tasks[i]);
 				}
 			}
 
-			if(config.concat && config.watcher.js){
-				grunt.registerTask('watcher:js:dev', ['concat:js', 'watch:js']);
-			}
-
-			if(config.coffee){
-				grunt.loadNpmTasks('grunt-contrib-coffee');
-
-				if(config.coffee.dev && config.watcher && config.watcher.coffee){
-					grunt.registerTask('watcher:coffee:dev', ['coffee:dev', 'watch:coffee']);
+			if(gruntConfig.register_tasks){
+				for(key in gruntConfig.register_tasks){
+					if(gruntConfig.register_tasks.hasOwnProperty(key)){
+						grunt.registerTask(key, gruntConfig.register_tasks[key]);
+					}
 				}
 			}
 

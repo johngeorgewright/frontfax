@@ -29,41 +29,61 @@ module.exports = class Config extends Base
 				},
 				"prepublish": {
 					"options": {
-						"paths": "<config:less.dev.options.paths>",
+						"paths": "<%= less.dev.options.paths %>",
 						"compress": true
 					},
-					"files": "<config:less.dev.files>"
+					"files": "<%= less.dev.files %>"
 				}
 			},
 			"coffee": {
-				"dev": {
-					"options": {
-						"base": true
-					},
-					"files": {
-						"assets/js/src/*.js": ["assets/coffee/**/*.coffee"]
-					}
+				"options": {
+					"base": true
+				},
+				"files": {
+					"expand": true,
+					"cwd": "assets/coffee",
+					"src": ["**/*.coffee"],
+					"dest": "assets/js/src/",
+					"ext": ".js"
 				}
 			},
 			"concat": {
-				"js": {
+				"files": {
 					"src": "assets/js/src/**/*.js",
 					"dest": "assets/js/main.js"
+				}
+			},
+			"uglify": {
+				"options": {
+					"mangle": true,
+					"compress": true
+				},
+				"prepublish": {
+					"files": {
+						"assets/js/main.js": "assets/js/main.js"
+					}
 				}
 			},
 			"watcher": {
 				"coffee": {
 					"files": ["assets/coffee/**/*.coffee"],
-					"tasks": ["coffee:dev"]
+					"tasks": ["coffee"]
 				},
 				"less": {
 					"files": ["assets/less/**/*.less"],
 					"tasks": ["less:dev"]
 				},
 				"js": {
-					"files": "<config:concat.js.src>",
-					"tasks": ["concat:js"]
+					"files": "<%= concat.files.src %>",
+					"tasks": ["concat"]
 				}
+			},
+			"load_npm_tasks": ["grunt-contrib-coffee", "grunt-contrib-concat", "grunt-contrib-less", "grunt-contrib-uglify", "grunt-contrib-watch"],
+			"register_tasks": {
+				"watcher:coffee": ["coffee", "watch:coffee"],
+				"watcher:js": ["concat", "watch:js"],
+				"watcher:less": ["less:dev", "watch:less"],
+				"prepublish": ["coffee", "less:prepublish", "uglify"]
 			},
 			"proxy": false
 		}
