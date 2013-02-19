@@ -4,22 +4,30 @@ mkdirp   = require 'mkdirp'
 skeleton = require './skeleton'
 fs       = require 'fs'
 
+assetsDir = (base)->
+	assetsDir = path.resolve base, 'assets'
+
+createAssets = (base, callback)->
+	assets    = assetsDir base
+	js        = path.join assets, 'js', 'src'
+	css       = path.join assets, 'css'
+	images    = path.join assets, 'images'
+	stat      = path.resolve base, 'static'
+	async.forEach [coffee, less, js, css, images, stat], mkdirp, callback
+
+createLessAssets = (base, callback)->
+	assets = assetsDir base
+	less   = path.join assets, 'less'
+	async.series [
+		(callback)-> mkdirp less, callback
+		(callback)-> fs.writeFile path.join(less, 'main.less'), '', callback
+	], callback
+
+createCoffeeAssets = (base, callback)->
+	coffee = path.join assetsDir(base), 'coffee'
+	mkdirp coffee, callback
+
 exports.new = ->
-	createAssets = (base, callback)->
-		assetsDir = path.resolve base, 'assets'
-		coffee    = path.join assetsDir, 'coffee'
-		less      = path.join assetsDir, 'less'
-		js        = path.join assetsDir, 'js', 'src'
-		css       = path.join assetsDir, 'css'
-		images    = path.join assetsDir, 'images'
-		stat      = path.resolve base, 'static'
-
-		async.forEach [coffee, less, js, css, images, stat], mkdirp, (err)->
-			if err
-				callback err
-			else
-				fs.writeFile path.join(assetsDir, 'less', 'main.less'), '', callback
-
 	create = (name, callback=->)->
 		pckge = new skeleton.Package
 			name   : name
