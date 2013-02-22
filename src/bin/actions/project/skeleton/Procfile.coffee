@@ -6,10 +6,11 @@ module.exports = class Procfile extends Base
 		'Procfile'
 
 	content: ->
-		"""
+		content = """
 		server: node server
-		coffee: grunt watcher:coffee --force
-		less: grunt watcher:less --force
 		js: grunt watcher:js --force
 		"""
+		content += "\ncoffee: grunt watcher:coffee --force" if @coffee
+		content += "\nless: grunt watcher:less --force" if @less
+		content
 
