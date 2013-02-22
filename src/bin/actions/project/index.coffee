@@ -144,3 +144,69 @@ exports.new = ->
 		], (err)->
 			console.log err if err
 
+# Adds tech support for things like LESS and CoffeeScript
+exports.add = ->
+
+	packageUtil = require '../../lib/package'
+	configUtil  = require '../../lib/config'
+	procUtil    = require '../../lib/procfile'
+
+	# Adds dependencies to the package.json
+	amendPackage = (options, callback)->
+		file = path.resolve 'package.json'
+		pck  = require file
+		packageUtil.addLess pck if options.less
+		packageUtil.addCoffee pck if options.coffee
+		fs.writeFile file, JSON.stringify(pck, null, 2), callback
+
+	# Adds extra configuration
+	amendConfig = (options, callback)->
+		file = path.resolve 'config/default.json'
+		json = require file
+		configUtil.addLess json if options.less
+		configUtil.addCoffee json if options.coffee
+		fs.writeFile file, JSON.stringify(json, null, 2), callback
+
+	# Adds to the process list
+	amendProcfile = (options, callback)->
+		file = path.resolve 'Procfile'
+		fs.readFile file, (err, data)->
+			if err
+				callback err
+			else
+				lines = data.toString().match /[^\n\r]+/g
+				lines.push procUtil.less() if options.less and procUtil.less() not in lines
+				lines.push procUtil.coffee() if options.coffee and  procUtil.coffee() not in lines
+				fs.writeFile file, lines.join("\n"), callback
+
+	# Adds tech to the current project
+	add = (options, callback)->
+		base = path.resolve '.'
+		if options.less or options.coffee
+			async.parallel [
+				(callback)-> if options.less then createLessAssets(base, callback) else callback()
+				(callback)-> if options.coffee then createCoffeeAssets(base, callback) else callback()
+				(callback)-> amendPackage options, callback
+				(callback)-> amendConfig options, callback
+				(callback)-> amendProcfile options, callback
+			], callback
+
+	# The return function
+	(program)->
+		async.series [
+
+			# Is the current directory an NPM project?
+			(callback)->
+				fs.exists 'package.json', (exists)->
+					if exists
+						callback()
+					else
+						callback new Error 'The current directory doesn\'t seem to be a NPM project.'
+
+			# Add the extras
+			(callback)->
+				add program, callback
+
+		], (err)->
+			console.log "ERROR: #{err.message}" if err
+

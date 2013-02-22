@@ -1,5 +1,6 @@
 Base = require './Base'
 pack = require '../../../../../package.json'
+util = require '../../../lib/package'
 
 module.exports = class Package extends Base
 
@@ -24,10 +25,10 @@ module.exports = class Package extends Base
 				'grunt-contrib-watch'  : '~0.2.0'
 
 		if @less
-			json.dependencies['grunt-contrib-less'] = '~0.5.0'
+			util.addLess json
 
 		if @coffee
-			json.dependencies['grunt-contrib-coffee'] = "~0.4.0"
+			util.addCoffee json
 
 		JSON.stringify json, null, 2
 
