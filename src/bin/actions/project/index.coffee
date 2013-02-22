@@ -3,6 +3,7 @@ path     = require 'path'
 mkdirp   = require 'mkdirp'
 skeleton = require './skeleton'
 fs       = require 'fs'
+{spawn}  = require 'child-proc'
 
 # Returns the asset directory relative to a
 # given 'base'
@@ -46,6 +47,17 @@ createLessAssets = (base, callback)->
 createCoffeeAssets = (base, callback)->
 	coffee = path.join assetsDir(base), 'coffee'
 	mkdirp coffee, callback
+
+# Installs all NPM dependencies
+#
+# @param callback {Function} OnComplete callback
+npmInstall = (callback)->
+	install = spawn 'npm', ['i'], stdio: 'inherit'
+	install.on 'exit', (code)->
+		if code is 0
+			callback()
+		else
+			callback new Error "Cannot install NPM dependencies. Error code #{code}."
 
 # Commander action callback for creating a new
 # project.
@@ -97,19 +109,8 @@ exports.new = ->
 			(callback)-> start.render callback
 			(callback)-> grunt.render callback
 			(callback)-> server.render callback
-		], (err)->
-			if err
-				callback err
-			else
-				console.log """
-
-					Now run:
-						cd #{name}
-						npm i
-
-					"""
-				callback()
-				
+		], callback
+			
 	# This is the return function
 	(name, program)->
 		async.waterfall [
@@ -139,10 +140,20 @@ exports.new = ->
 				if ok
 					create name, program, callback
 				else
+					callback new Error 'Skipped'
+
+			(creations, callback)->
+				try
+					process.chdir name
 					callback()
+				catch e
+					callback e
+
+			(callback)->
+				npmInstall callback
 
 		], (err)->
-			console.log err if err
+			console.log err.message if err
 
 # Adds tech support for things like LESS and CoffeeScript
 exports.add = ->
@@ -206,6 +217,10 @@ exports.add = ->
 			# Add the extras
 			(callback)->
 				add program, callback
+
+			# Install NPM dependencies
+			(callback)->
+				npmInstall callback
 
 		], (err)->
 			console.log "ERROR: #{err.message}" if err

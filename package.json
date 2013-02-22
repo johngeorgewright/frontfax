@@ -22,7 +22,8 @@
     "socket.io": "~0.9.13",
     "gaze": "~0.3.2",
     "bytes": "~0.2.0",
-    "colors": "~0.6.0-1"
+    "colors": "~0.6.0-1",
+    "child-proc": "0.0.1"
   },
   "devDependencies": {
     "coffee-script": "1.4.0",
