@@ -1,4 +1,5 @@
 Base = require './Base'
+util = require '../../../lib/config'
 
 module.exports = class Config extends Base
 
@@ -6,52 +7,43 @@ module.exports = class Config extends Base
 		'config/default.json'
 
 	content: ->
-		"""
-		{
-			"base": false,
-			"images": {
-				"paths": "/images"
-			},
-			"css": {
-				"paths": "/stylesheets"
-			},
-			"less": {
-				"dev": {
-					"options": {
-						"paths": ["assets/less"]
-					},
-					"files": {
-						"assets/css/main.css": "assets/less/main.less"
-					}
-				},
-				"prepublish": {
-					"options": {
-						"paths": "<config:less.dev.options.paths>",
-						"compress": true
-					},
-					"files": "<config:less.dev.files>"
-				}
-			},
-			"js": {
-				"paths": "/js"
-			},
-			"concat": {
-				"js": {
-					"src": "assets/js/src/**/*.js",
-					"dest": "assets/js/main.js"
-				}
-			},
-			"watcher": {
-				"less": {
-					"files": ["assets/less/**/*.less"],
-					"tasks": ["less:dev"]
-				},
-				"js": {
-					"files": "<config:concat.js.src>",
-					"tasks": ["concat:js"]
-				}
-			},
-			"proxy": false
-		}
-		"""
+		json =
+			base    : off
+			proxy   : off
+			images  : {paths: '/images'}
+			css     : {paths: '/stylesheets'}
+			js      : {paths: '/js'}
+
+			concat:
+				files:
+					src  : 'assets/js/src/**/*.js'
+					dest : 'assets/js/main.js'
+
+			uglify:
+				options:
+					mangle   : yes
+					compress : yes
+				prepublish:
+					files:
+						'assets/js/main.js': 'assets/js/main.js'
+
+			watcher:
+				js:
+					files: '<%= concat.files.src %>'
+					tasks: ['concat']
+
+			load_npm_tasks: [
+				'grunt-contrib-concat'
+				'grunt-contrib-uglify'
+				'grunt-contrib-watch'
+			]
+
+			register_tasks:
+				'watcher:js'     : ['concat', 'watch:js']
+				'prepublish'     : ['coffee', 'less:prepublish', 'uglify']
+
+		util.addLess json if @less
+		util.addCoffee json if @coffee
+
+		JSON.stringify json, null, 2
 

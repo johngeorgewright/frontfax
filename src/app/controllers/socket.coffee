@@ -19,23 +19,26 @@ exports.refreshServer = (server)->
 					console.log 'Refreshing your page'
 					socket.emit 'refreshAll'
 
+injection = (method)->
+	(chunk, encoding)->
+		html = /html/.test @get('Content-Type')
+		if chunk and html
+			newChunk = chunk.toString encoding
+			if newChunk.indexOf('</body>') >= 0
+				newChunk = socket.addClientCode newChunk, encoding
+				try
+					if @get 'content-length'
+						@set 'content-length', newChunk.length
+					chunk = newChunk
+				catch e
+					# The response is from a proxy
+		method.call @, chunk, encoding
+
 exports.refreshClient = (app)->
 	app.get '/frontfax/refresh.js', (req, res)->
 		res.sendfile path.join(__dirname, '..', 'public', 'js', 'refresh.js')
 
-	res    = app.response
-	writer = res.write
-
-	res.write = (chunk, encoding)->
-		html = /html/.test @get('Content-Type')
-		if chunk and html
-			chunk = chunk.toString encoding
-			if chunk.indexOf('</body>') >= 0
-				newChunk = socket.addClientCode chunk, encoding
-				try
-					@set 'Content-Length', newChunk.length
-					chunk = newChunk
-				catch e
-					# The response is from a proxy
-		writer.call this, chunk, encoding
+	res       = app.response
+	res.end   = injection res.end
+	res.write = injection res.write
 

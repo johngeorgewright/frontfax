@@ -13,10 +13,18 @@ program
 	.action actions.server.start()
 
 program
-  .command('new')
-  .description('Creates a new frontfax project')
-  .usage('<name>')
-  .action actions.project.new()
+	.command('new <name>')
+	.description('Creates a new frontfax project')
+	.option('--less', 'Adds LESS support')
+	.option('--coffee', 'Adds CoffeeScript support')
+	.action actions.project.new()
+
+program
+	.command('add')
+	.description('Adds extra support (like LESS and CoffeeScript) to an existing Frontfax project')
+	.option('--less', 'Adds LESS suport')
+	.option('--coffee', 'Adds CoffeeScript support')
+	.action actions.project.add()
 
 program.parse process.argv
 

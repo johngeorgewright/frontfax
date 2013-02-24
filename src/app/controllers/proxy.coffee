@@ -5,12 +5,17 @@ path    = require 'path'
 exports.request = (url)->
 	(req, res)->
 		requestUrl = url + req.originalUrl
+		match      = path.extname(req.path).match /html|js|css$/
+		html       = path.extname(req.path).match /html$/
 
-		if req.method is 'GET' and path.extname(req.path) in ['.html', '']
+		res.header 'proxied', true
+
+		if req.method is 'GET' and match?
 			req.headers['accept-encoding'] = ''
 			req.pipe request requestUrl, (err, proxyRes, body)->
-				body = socket.addClientCode body
-				res.type 'text/html'
+				if html?
+					body = socket.addClientCode body
+					res.type match.toString()
 				res.send body
 
 		else

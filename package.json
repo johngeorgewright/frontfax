@@ -1,13 +1,13 @@
 {
   "name": "frontfax",
-  "version": "0.0.21",
+  "version": "0.0.25",
   "description": "Development environment for frontend developers at Fairfax Media.",
   "main": "build/app/index.js",
   "bin": {
     "frontfax": "bin/frontfax.js"
   },
   "scripts": {
-    "prepublish": "coffee -c -o build src"
+    "prepublish": "coffee -b -c -o build src"
   },
   "author": "John Wright <john.wright@fairfaxmedia.com.au>",
   "dependencies": {
@@ -19,15 +19,17 @@
     "mkdirp": "0.3.4",
     "module-index": "3.0.2",
     "request": "2.12.0",
-    "jade": "~0.28.1",
-    "coffeecup": "~0.3.19",
-    "grunt": "~0.3.17",
-    "grunt-contrib-uglify": "~0.1.0",
-    "grunt-contrib-less": "~0.3.2",
     "socket.io": "~0.9.13",
-    "gaze": "~0.3.2"
+    "gaze": "~0.3.2",
+    "bytes": "~0.2.0",
+    "colors": "~0.6.0-1",
+    "child-proc": "0.0.1"
   },
   "devDependencies": {
-    "coffee-script": "1.4.0"
+    "coffee-script": "1.4.0",
+    "consolidate": "~0.8.0",
+    "swig": "~0.13.5",
+    "jade": "~0.28.1",
+    "coffeecup": "~0.3.19"
   }
 }
