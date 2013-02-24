@@ -1,5 +1,5 @@
-Frontfax
-========
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Pirata+One"/>
+<h1 style="font-family:'Pirata One';">Frontfax</h1>
 
 Sets up a development environment for frontend developers that can't access the source code. Recently, at the last couple of places that I've been working, it's been somewhat impossible to access the source code of the working project, and therefore, I've been downloading the source via the web, working on it and then posting it back to backend developers to insert in to the project. This is somewhat annoying, so I've developed **Frontfax**.
 
