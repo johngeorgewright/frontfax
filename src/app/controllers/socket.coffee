@@ -21,8 +21,8 @@ exports.refreshServer = (server)->
 
 injection = (method)->
 	(chunk, encoding)->
-		html = /html/.test @get('Content-Type')
-		if chunk and html
+		html = path.extname(@req.path) in ['.html', '']
+		if chunk? and html
 			newChunk = chunk.toString encoding
 			if newChunk.indexOf('</body>') >= 0
 				newChunk = socket.addClientCode newChunk, encoding
