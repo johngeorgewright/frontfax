@@ -7,7 +7,7 @@ Installation
 ------------
 
 1. Install [node](http://nodejs.org) and [npm](https://npmjs.org)
-2. Install Frontfax `[sudo] npm i -g frontfax`
+2. Install Frontfax, Grunt and Foreman `[sudo] npm i -g frontfax grunt-cli foreman`
 
 Creating a Project
 ------------------
