@@ -2,18 +2,21 @@ io     = require 'socket.io'
 path   = require 'path'
 gaze   = require 'gaze'
 socket = require '../../lib/socket'
+config = require 'config'
 
 exports.refreshServer = (server)->
 	ioServer = io.listen server, 'log level': 2
 	ioServer.sockets.on 'connection', (socket)->
 
-		gaze '**/*.css', (err, watcher)->
+		gaze 'assets/css/**/*.css', (err, watcher)->
 			unless err
 				@on 'all', (event, filename)->
 					console.log 'Refreshing your CSS'
 					socket.emit 'refreshCSS'
 
-		gaze ['assets/**/*.js', 'static/**/*.*', 'images/**.*'], (err, watcher)->
+		jsFile = config.concat.files.dest ? 'assets/**/*.js'
+
+		gaze [jsFile, 'static/**/*.*', 'images/**.*'], (err, watcher)->
 			unless err
 				@on 'all', (event, filename)->
 					console.log 'Refreshing your page'

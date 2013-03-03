@@ -7,7 +7,8 @@
     "frontfax": "bin/frontfax.js"
   },
   "scripts": {
-    "prepublish": "coffee -b -c -o build src"
+    "prepublish": "coffee -b -c -o build src",
+	"dev": "coffee -b -c -w -o build src"
   },
   "author": "John Wright <john.wright@fairfaxmedia.com.au>",
   "dependencies": {
