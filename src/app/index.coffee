@@ -6,7 +6,7 @@ path        = require 'path'
 app	        = express()
 assets      = path.resolve 'assets'
 staticDir   = path.resolve 'static'
-assetTypes  = ['images', 'css', 'js']
+assetTypes  = ['images', 'css', 'js', 'fonts']
 templating  = no
 
 # Auth
