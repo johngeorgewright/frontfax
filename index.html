@@ -1,0 +1,201 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Frontfax by johngeorgewright</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/johngeorgewright/frontfax">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/johngeorgewright/frontfax/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/johngeorgewright/frontfax/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Frontfax</h1>
+          <p>A development environment for frontend-ers.</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/johngeorgewright">johngeorgewright</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>Frontfax</h1>
+
+<p>Sets up a development environment for frontend developers that can't access the source code. Recently, at the last couple of places that I've been working, it's been somewhat impossible to access the source code of the working project, and therefore, I've been downloading the source via the web, working on it and then posting it back to backend developers to insert in to the project. This is somewhat annoying, so I've developed <strong>Frontfax</strong>.</p>
+
+<h2>Installation</h2>
+
+<ol>
+<li>Install <a href="http://nodejs.org">node</a> and <a href="https://npmjs.org">npm</a>
+</li>
+<li>Install Frontfax, Grunt and Foreman <code>[sudo] npm i -g frontfax grunt-cli foreman</code>
+</li>
+</ol><h2>Creating a Project</h2>
+
+<ol>
+<li>Create a project <code>frontfax new myproject</code>
+</li>
+<li>Change in to the project's directory <code>cd myproject</code>
+</li>
+<li>Start the server <code>npm start</code>
+</li>
+<li>Then <a href="http://localhost:5000">view the server</a>
+</li>
+</ol><h2>Your Workspace</h2>
+
+<pre><code>- myproject
+    - assets
+        - css
+        - images
+        - js
+            - src
+        - less
+    - static
+</code></pre>
+
+<p>This is the process in which frontfax handles each HTTP request:</p>
+
+<ol>
+<li>Receives a request (for example /images/logo.png).</li>
+<li>Tries to find it in your workspace (assets/images/logo.png). If found the file is returned and the process stops here.</li>
+<li>Proxies the request to the configured proxy server and returns the result.</li>
+</ol><h3>Proxying</h3>
+
+<p>The greatest feature of Frontfax is it's ability to target a proxy server for files that don't exist on your computer. To configure the proxy target open <code>config/default.json</code> and change the <code>proxy</code> option:</p>
+
+<div class="highlight"><pre><span class="p">{</span>
+    <span class="p">...</span>
+    <span class="s2">"proxy"</span><span class="o">:</span> <span class="s2">"http://www.the.site.im.working.on.com"</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+
+<h3>URL Configuration</h3>
+
+<p>The images, js, css URLs are can configured, but these files will always be accessed from you assets directory.</p>
+
+<p>The <code>static</code> directory is the last place the server looks before proxying the request. This is good for HTML files. You do not need to configure the URL for this as it will consider the root to be accessible from the static directory.</p>
+
+<p>To change the URLs open the <code>config/default.json</code> file and edit the <code>[image|css|js].paths</code> urls. </p>
+
+<h3>LESS</h3>
+
+<p>To install LESS support run the following command in your project directory <code>frontfax add --less</code>.</p>
+
+<p>While you're working on any less files they will automatically be converted in to css and placed in the css directory.</p>
+
+<p>The advantages are of writing you CSS as LESS are:</p>
+
+<ul>
+<li>Pre-processing functionality</li>
+<li>Syntax is the same as CSS, so even if you don't want to use LESS's functionality you can just write plain CSS.</li>
+<li>You can compile a selection of files in to one.</li>
+</ul><p>When writing your less files, it is recommended to have one "main" file that includes all the requirements. This means that only one file needs to be uploaded to the production server after development.</p>
+
+<p>Here's an example. Try to split your work in to many easy to read files.</p>
+
+<pre lang="less"><code>/* assets/header.less */
+
+.header {
+    .nav {
+        /* nav styles */
+    }
+
+    .logo {
+        /* logo styles */
+    }
+}
+</code></pre>
+
+<pre lang="less"><code>/* assets/article.less */
+
+.article {
+    .picture {
+        /* picture styles */
+    }
+
+    .teaser {
+        /* teaser styles */
+    }
+}
+</code></pre>
+
+<pre lang="less"><code>/* assets/main.less */
+
+@import 'header';
+@import 'article';
+</code></pre>
+
+<p>Now you can point to one CSS file (<code>/my/configured/css/path/main.css</code>) and have all your CSS returned:</p>
+
+<div class="highlight"><pre><span class="c">/* build/main.css */</span>
+
+<span class="nc">.header</span> <span class="nc">.nav</span> <span class="p">{</span>
+    <span class="c">/* nav styles */</span>
+<span class="p">}</span>
+<span class="nc">.header</span> <span class="nc">.logo</span> <span class="p">{</span>
+    <span class="c">/* logo styles */</span>
+<span class="p">}</span>
+<span class="nc">.article</span> <span class="nc">.picture</span> <span class="p">{</span>
+    <span class="c">/* picture styles */</span>
+<span class="p">}</span>
+<span class="nc">.article</span> <span class="nc">.teaser</span> <span class="p">{</span>
+    <span class="c">/* teaser styles */</span>
+<span class="p">}</span>
+</pre></div>
+
+<h3>JS Combine</h3>
+
+<p>While you're working on any js files they will automatically be combined from assets/js/src/*.js into assets/js/main.js.</p>
+
+<h3>Templating</h3>
+
+<p>While working on your static files in the <code>static</code> directory, you can also use a variety of templating languages.</p>
+
+<h4><a href="http://jade-lang.com/">Jade</a></h4>
+
+<ol>
+<li>Install jade <code>npm i jade</code>
+</li>
+<li>Use the jade extension (<code>.jade</code>) when editing your templates</li>
+</ol><h4><a href="https://github.com/gradus/coffeecup">Coffee-Cup</a></h4>
+
+<ol>
+<li>Install coffee cup <code>npm i coffeecup</code>
+</li>
+<li>Use the coffee extension (<code>.coffee</code>) when editing your templates</li>
+</ol><h4><a href="http://paularmstrong.github.com/swig/">Swig</a></h4>
+
+<ol>
+<li>Install consolidate and swig <code>npm i consolidate swig</code>
+</li>
+<li>All html files will now be parsed with swig.</li>
+</ol><h2>Bugs</h2>
+
+<p>Report all bugs in the <a href="https://bitbucket.org/johngeorgewright/frontfax/issues">Bitucket issue list</a>.</p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
