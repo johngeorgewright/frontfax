@@ -14,7 +14,7 @@ exports.refreshServer = (server)->
 					console.log 'Refreshing your CSS'
 					socket.emit 'refreshCSS'
 
-		jsFile = config.concat.files.dest ? 'assets/**/*.js'
+		jsFile = config.concat?.files?.dest ? 'assets/**/*.js'
 
 		gaze [jsFile, 'static/**/*.*', 'images/**.*'], (err, watcher)->
 			unless err
