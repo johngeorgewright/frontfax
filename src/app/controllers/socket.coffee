@@ -24,7 +24,7 @@ exports.refreshServer = (server)->
 
 injection = (method)->
 	(chunk, encoding)->
-		html = path.extname(@req.path) in ['.html', '']
+		html = /text\/html/i.test(@get 'content-type') or path.extname(@req.path) in ['.html', '']
 		if chunk? and html
 			newChunk = chunk.toString encoding
 			if newChunk.indexOf('</body>') >= 0

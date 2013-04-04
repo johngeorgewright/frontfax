@@ -7,10 +7,13 @@ exports.request = (url)->
 		requestUrl = url + req.originalUrl
 		extname    = path.extname req.path
 		match      = extname.match /html|js|css$/
-		html       = extname in ['.html', '']
+		html       = /text\/html/i.test(res.get 'content-type') or extname in ['.html', '.aspx', '']
 
 		res.header 'proxied', true
 
+		# TODO Once I figure out how to get the written content
+		# from a piped response, we won't need to do any of this
+		# and can leave it up to the socket controller.
 		if req.method is 'GET' and (match? or html)
 			req.headers['Accept-Encoding'] = ''
 			req.pipe request requestUrl, (err, proxyRes, body)->
