@@ -8,8 +8,9 @@ exports.clientCode = clientCode = ->
 
 exports.addClientCode = addClientCode = (html, encoding)->
 	clientCodeRegExp = new RegExp util.escapeRegExp clientCode()
-	if html.indexOf('</body>') >= 0 and not clientCodeRegExp.test html
-		html = html.replace '</body>', "#{clientCode()}</body>"
-	html = new Buffer html, encoding
+	if html?
+		if html.indexOf('</body>') >= 0 and not clientCodeRegExp.test html
+			html = html.replace '</body>', "#{clientCode()}</body>"
+		html = new Buffer html, encoding
 	html
 
