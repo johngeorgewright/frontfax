@@ -1,6 +1,6 @@
 {
   "name": "frontfax",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "description": "Development environment for frontend developers at Fairfax Media.",
   "main": "build/app/index.js",
   "bin": {
