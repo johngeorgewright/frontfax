@@ -21,15 +21,17 @@ contentReplacer = (replacements, method)->
 		method.call @, chunk, encoding
 
 exports.replaceInResponse = (app, replacements)->
+	replacementsCopy = {}
+
 	for own key, value of replacements
 		console.log "Will be replacing \"#{key}\" with \"#{value}\""
-		replacements[key] =
+		replacementsCopy[key] =
 			reg   : new RegExp util.escapeRegExp(key), 'g'
 			value : value
 	
 	res       = app.response
-	res.end   = contentReplacer replacements, res.end
-	res.write = contentReplacer replacements, res.write
+	res.end   = contentReplacer replacementsCopy, res.end
+	res.write = contentReplacer replacementsCopy, res.write
 
 exports.loggerFormat = (tokens, req, res)->
 	proxy   = res.getHeader 'proxied'
