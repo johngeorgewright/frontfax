@@ -18,12 +18,16 @@ exports.request = (url)->
 			req.headers['Accept-Encoding'] = ''
 			req.pipe request requestUrl, (err, proxyRes, body)->
 				if err
-					next err
+					next "PROXY response error: #{err.message}"
 				else
 					body = socket.addClientCode body if html
 					res.type if match then match[0] else 'html'
 					res.send body
 
 		else
-			req.pipe(request requestUrl).pipe res
+			proxyTarget = request requestUrl
+			proxyTarget.on 'error', (err)-> next "PROXY target error: #{err.message}"
+			proxyResponse = req.pipe proxyTarget
+			proxyResponse.on 'error', (err)-> next "PROXY response error: #{err.message}"
+			proxyResponse.pipe res
 
