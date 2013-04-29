@@ -12,7 +12,7 @@ exports.refreshServer = (server)->
 			unless err
 				@on 'all', (event, filename)->
 					console.log 'Refreshing your CSS'
-					socket.emit 'refreshCSS'
+					ioServer.sockets.emit 'refreshCSS'
 
 		jsFile = config.concat?.files?.dest ? 'assets/**/*.js'
 
@@ -20,7 +20,7 @@ exports.refreshServer = (server)->
 			unless err
 				@on 'all', (event, filename)->
 					console.log 'Refreshing your page'
-					socket.emit 'refreshAll'
+					ioServer.sockets.emit 'refreshAll'
 
 injection = (method)->
 	(chunk, encoding)->
