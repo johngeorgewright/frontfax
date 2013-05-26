@@ -22,6 +22,14 @@ contentReplacer = (replacements, method)->
 
 exports.replaceInResponse = (app, replacements)->
 	replacementsCopy = {}
+	regExpReplacements = if replacements.$RegExp? then replacements.$RegExp else {}
+	delete replacements.$RegExp
+
+	for own key, value of regExpReplacements
+		console.log "Will be compiling \"#{key}\" to \"#{value}\""
+		replacementsCopy[key] =
+			reg   : new RegExp key, 'g'
+			value : value
 
 	for own key, value of replacements
 		console.log "Will be replacing \"#{key}\" with \"#{value}\""
