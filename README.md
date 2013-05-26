@@ -69,7 +69,7 @@ Sometimes you may need to automatically change the content from the response. Fo
 }
 ```
 
-You can also use regular expressions by adding your replacements to a `$RegExp` object:
+As of v0.2.0, you can also use regular expressions by adding your replacements to a `$RegExp` object:
 
 ```js
 {
