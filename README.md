@@ -78,7 +78,7 @@ As of v0.2.0, you can also use regular expressions by adding your replacements t
 	"replacements": {
 		"http://assets.mysite.com": "/images",
 		$RegExp: {
-			"http://s1\\.wp\\.com/\\?custom-css=(\\d+)[^"]*": "/stylesheets/custom-$1.css"
+			"http://s1\\.wp\\.com/\\?custom-css=(\\d+)[^\"]*": "/stylesheets/custom-$1.css"
 		}
 	}
 }
