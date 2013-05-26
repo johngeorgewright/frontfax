@@ -55,6 +55,37 @@ The `static` directory is the last place the server looks before proxying the re
 
 To change the URLs open the `config/default.json` file and edit the `[image|css|js].paths` urls. 
 
+### Response replacement
+
+Sometimes you may need to automatically change the content from the response. For example, you may wish to change a URL from `http://assets.mysite.com` to `/images`. This can be by configuring the "replacements" in the `config/default.json` file. Here's that example:
+
+```js
+{
+	"base": false,
+	"proxy": "http://www.mysite.com", // this URL will automatically get replaced with ""
+	"replacements": {
+		"http://assets.mysite.com": "/images"
+	}
+}
+```
+
+You can also use regular expressions by adding your replacements to a `$RegExp` object:
+
+```js
+{
+	"base": false,
+	"proxy": "http://www.mysite.com",
+	"replacements": {
+		"http://assets.mysite.com": "/images",
+		$RegExp: {
+			"http://s1\\.wp\\.com/\\?custom-css=(\\d+)[^"]*": "/stylesheets/custom-$1.css"
+		}
+	}
+}
+```
+
+The regular expression needs to be passed as a string. Hence why you see the double backquotes.
+
 ### LESS
 
 To install LESS support run the following command in your project directory `frontfax add --less`.
