@@ -1,6 +1,8 @@
 Frontfax
 ========
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/johngeorgewright/frontfax.svg)](https://greenkeeper.io/)
+
 Sets up a development environment for frontend developers that can't access the source code. Recently, at the last couple of places that I've been working, it's been somewhat impossible to access the source code of the working project, and therefore, I've been downloading the source via the web, working on it and then posting it back to backend developers to insert in to the project. This is somewhat annoying, so I've developed **Frontfax**.
 
 Installation
